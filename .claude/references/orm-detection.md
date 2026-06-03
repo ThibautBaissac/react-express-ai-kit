@@ -1,34 +1,37 @@
 # ORM / data-layer detection
 
-Identify the project's data layer before changing any schema. Detect — never assume.
+Identify the project's data layer before changing schema.
+Detect; do not assume.
 
 ## Signals by tool
 
-| Tool | `package.json` dep | Config / schema files | Migration command (run via project script or `$PM_EXEC`) |
+| Tool | `package.json` dep | Config / schema files | Migration command |
 |---|---|---|---|
-| **Prisma** | `prisma`, `@prisma/client` | `prisma/schema.prisma`, `prisma/migrations/` | `prisma migrate dev --name <x>` (dev), `prisma generate` |
-| **Drizzle** | `drizzle-orm`, `drizzle-kit` | `drizzle.config.ts`, `*.schema.ts`, `drizzle/` | `drizzle-kit generate` then `drizzle-kit migrate` |
-| **Mongoose** | `mongoose` | `*.model.ts` with `new Schema({...})` | no migration framework by default; schema is code (consider `migrate-mongo` if present) |
-| **TypeORM** | `typeorm` | `ormconfig.*`, `*.entity.ts`, `@Entity()` | `typeorm migration:generate` / `migration:run` |
-| **Knex** | `knex` | `knexfile.{ts,js}`, `migrations/` | `knex migrate:make <x>` then `knex migrate:latest` |
-| **Kysely** | `kysely` | typed schema + a migrator setup | project-defined migrator (look for a `migrate` script) |
+| **Prisma** | `prisma`, `@prisma/client` | `prisma/schema.prisma`, `prisma/migrations/` | `prisma migrate dev --name <x>` in dev, then `prisma generate` |
+| **Drizzle** | `drizzle-orm`, `drizzle-kit` | `drizzle.config.ts`, `*.schema.ts`, `drizzle/` | `drizzle-kit generate`, then `drizzle-kit migrate` |
+| **Mongoose** | `mongoose` | `*.model.ts` with `new Schema({...})` | No default migration framework; inspect `migrate-mongo` or project scripts. |
+| **TypeORM** | `typeorm` | `ormconfig.*`, `*.entity.ts`, `@Entity()` | `typeorm migration:generate`, then `typeorm migration:run` |
+| **Knex** | `knex` | `knexfile.{ts,js}`, `migrations/` | `knex migrate:make <x>`, then `knex migrate:latest` |
+| **Kysely** | `kysely` | typed schema plus migrator setup | Project-defined migrator; inspect `migrate` scripts. |
 | **Sequelize** | `sequelize`, `sequelize-cli` | `.sequelizerc`, `models/`, `migrations/` | `sequelize-cli db:migrate` |
-| **Raw SQL / pg** | `pg`, `mysql2`, `better-sqlite3` | hand-written `.sql` in `migrations/` | project-specific runner; inspect scripts |
+| **Raw SQL / pg** | `pg`, `mysql2`, `better-sqlite3` | hand-written `.sql` in `migrations/` | Project-specific runner; inspect scripts. |
 
 ## How to confirm
 
 1. Read `package.json` dependencies for the names above.
-2. Look for the config/schema files; the presence of a `migrations/` dir tells you the
-   workflow style (generated migrations vs schema-push).
-3. Check `package.json` scripts for a `migrate`/`db:*`/`generate` script — **prefer the
-   project's own script** over calling the CLI directly, and run it via the detected
-   package manager.
-4. Grep an existing model/migration to copy naming, column-type, and index conventions.
+2. Look for config files, schema files, and `migrations/`.
+3. Use `migrations/` presence to infer generated migrations versus schema-push style.
+4. Check `package.json` scripts for `migrate`, `db:*`, or `generate`.
+5. Prefer the project's own script over direct CLI calls.
+6. Run project scripts through the detected package manager.
+7. Grep existing models and migrations to copy naming, column types, indexes, and rollback style.
 
-## Principles regardless of tool
+## Principles
 
-- Keep the persistence shape consistent with the shared zod domain type; the repository
-  maps between them.
-- Prefer additive, reversible changes. Flag and confirm anything destructive.
-- Match the repo's existing migration style exactly; don't introduce a second mechanism.
-- Never run a migration against a non-dev database without explicit user approval.
+- Keep persistence shapes consistent with shared zod domain types.
+- Let repositories map persistence rows to domain types.
+- Prefer additive, reversible changes.
+- Flag and confirm destructive changes.
+- Match the repo's existing migration style exactly.
+- Do not introduce a second migration mechanism.
+- Never run migrations against non-dev databases without explicit user approval.

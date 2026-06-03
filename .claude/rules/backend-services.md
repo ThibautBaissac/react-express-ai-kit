@@ -6,12 +6,14 @@ paths:
 
 # Services — business logic only
 
-The service holds the feature's rules and orchestration. It knows nothing about HTTP
-or about the concrete data store.
+The service owns feature rules and orchestration.
+It knows nothing about HTTP.
+It knows nothing about the concrete data store.
 
-## No HTTP leakage
+## Keep HTTP out
 
-Services take and return plain domain values — never `req`, `res`, or status codes.
+Services take and return plain domain values.
+Never accept `req`, `res`, or HTTP status codes.
 
 ```ts
 // ❌ Express bleeding into the service
@@ -21,9 +23,9 @@ function create(req: Request, res: Response) { /* ... */ }
 function create(input: CreateInvoiceBody): Promise<Invoice> { /* ... */ }
 ```
 
-## Depend on a repository interface, not an implementation
+## Depend on repository interfaces
 
-Inject the repository so the service is testable and storage-agnostic.
+Inject the repository so the service stays testable and storage-agnostic.
 
 ```ts
 export function createInvoiceService(repo: InvoiceRepository) {
@@ -38,19 +40,22 @@ export function createInvoiceService(repo: InvoiceRepository) {
 }
 ```
 
-## Signal failure with typed domain errors
+## Signal failures as domain failures
 
-Throw domain errors (e.g. `NotFoundError`, `ConflictError`) or return a `Result` union.
-Let the route/error middleware translate them to HTTP. Don't return HTTP status codes.
+Throw typed domain errors such as `NotFoundError` or `ConflictError`, or return a `Result` union.
+Let route or error middleware translate failures to HTTP.
+Do not return HTTP status codes.
 
-## Keep it cohesive (SRP)
+## Keep services cohesive
 
-One service per feature concern. If it starts coordinating unrelated concerns, split it.
-Manual dependency injection (pass collaborators in) over a DI framework until one earns
-its keep.
+Use one service per feature concern.
+Split a service when it starts coordinating unrelated concerns.
+Use manual dependency injection until a DI framework earns its cost.
 
 ## Checklist
-- [ ] No `req`/`res`/status codes in service signatures or bodies.
-- [ ] Collaborators (repository, clients) injected, not imported as singletons.
-- [ ] Depends on a repository **interface**, not a concrete ORM module.
-- [ ] Failures expressed as domain errors / Result, not HTTP.
+
+- [ ] Service signatures contain no `req`, `res`, or HTTP status codes.
+- [ ] Collaborators are injected.
+- [ ] Services depend on repository interfaces.
+- [ ] Services do not import concrete ORM modules.
+- [ ] Failures are domain errors or Results.

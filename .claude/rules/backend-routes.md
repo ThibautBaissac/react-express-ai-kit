@@ -6,12 +6,13 @@ paths:
   - "**/*.controller.ts"
 ---
 
-# Express routes / controllers — keep handlers thin
+# Express routes — thin handlers
 
-A handler does three things only: **parse input → call a service → shape the HTTP
-response**. No business logic, no data access.
+A handler does three things: parse input, call a service, shape the HTTP response.
+No business logic belongs here.
+No data access belongs here.
 
-## Parse at the boundary, then trust the type
+## Parse at the boundary
 
 ```ts
 // ✅ thin handler
@@ -27,7 +28,7 @@ router.post("/invoices", async (req, res, next) => {
 ```
 
 ```ts
-// ❌ logic + data access leaking into the handler
+// ❌ logic and data access leak into the handler
 router.post("/invoices", async (req, res) => {
   if (req.body.amountCents < 0) return res.status(400).send("bad");
   const row = await db.invoice.create({ data: req.body }); // DB in route
@@ -38,16 +39,18 @@ router.post("/invoices", async (req, res) => {
 
 ## Rules
 
-- Validate `req.body`/`params`/`query` with the shared zod schema. Never read raw
-  `req.body.x` without parsing.
-- No `any` on `req`/`res`. Type parsed values from the schema.
-- Don't catch-and-swallow: forward errors to the centralized error middleware via
-  `next(err)` (or an async wrapper). Map domain errors → HTTP status there, not inline.
-- A handler stays small enough to read at a glance. If it grows branches, the logic
-  belongs in the service.
+- Parse `req.body`, `req.params`, and `req.query` with shared zod schemas.
+- Never read raw `req.body.x` before parsing.
+- Do not use `any` on request or response objects.
+- Forward errors to centralized middleware with `next(err)` or an async wrapper.
+- Map domain errors to HTTP status in error middleware, not inline.
+- Move branching business logic into the service.
 
 ## Checklist
-- [ ] Input parsed with a shared zod schema at the top of the handler.
-- [ ] No DB/ORM calls and no business rules in the handler.
-- [ ] Errors forwarded to centralized middleware, not handled ad hoc.
-- [ ] No `any` on request/response; parsed values are typed.
+
+- [ ] Input is parsed with a shared zod schema at the top.
+- [ ] Handler calls a service and shapes the response.
+- [ ] Handler has no DB or ORM calls.
+- [ ] Handler has no business rules.
+- [ ] Errors go to centralized middleware.
+- [ ] Parsed values carry the types.

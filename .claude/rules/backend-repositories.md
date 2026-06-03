@@ -5,12 +5,13 @@ paths:
   - "**/*.repository.ts"
 ---
 
-# Repositories — the data-access boundary (ORM-agnostic)
+# Repositories — data-access boundary
 
-The repository is the only place that talks to the data store. It exposes a small,
-intention-revealing interface in **domain terms** and hides the ORM/driver entirely.
+The repository is the only layer that talks to the data store.
+Expose a small interface in domain terms.
+Hide the ORM or driver completely.
 
-## Define the interface in domain language
+## Define domain interfaces
 
 ```ts
 // ✅ storage-agnostic contract the service depends on
@@ -21,12 +22,12 @@ export interface InvoiceRepository {
 }
 ```
 
-The concrete implementation (Prisma, Drizzle, Mongoose, Knex, raw SQL — whatever the
-project uses) lives behind this interface and is swappable.
+The concrete implementation lives behind this interface.
+Use the project's detected data tool, but keep it out of the interface.
 
-## Return domain types, not ORM rows
+## Return domain types
 
-Map persistence shapes to domain types at this boundary so ORM details never leak upward.
+Map persistence rows to domain types at this boundary.
 
 ```ts
 // ✅ map at the edge
@@ -37,17 +38,20 @@ async findById(id: string): Promise<Invoice | null> {
 ```
 
 ```ts
-// ❌ leaking the ORM entity (and its lazy relations) to callers
+// ❌ leaking the ORM entity and lazy relations
 async findById(id: string) { return db.invoice.findUnique({ where: { id } }); }
 ```
 
-## No business rules here
+## Keep business rules out
 
-Repositories fetch and persist. Decisions ("can this invoice be sent?") belong in the
-service. Keep methods thin and named for intent, not for SQL.
+Repositories fetch and persist.
+Services make decisions such as whether an invoice can be sent.
+Keep repository methods thin and intent-named.
 
 ## Checklist
-- [ ] Service depends on an interface; the ORM is referenced only in the impl.
-- [ ] Methods return domain types, mapped from persistence rows.
-- [ ] No business decisions in repository methods.
-- [ ] No ORM types in the interface signature.
+
+- [ ] Services depend on a repository interface.
+- [ ] ORM or driver types stay inside the implementation.
+- [ ] Methods return domain types.
+- [ ] Rows are mapped or parsed at the repository edge.
+- [ ] Business decisions stay out of repositories.

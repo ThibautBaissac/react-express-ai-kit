@@ -5,25 +5,30 @@ paths:
 
 # React components — presentational and composable
 
-Components render UI from props. Data fetching and business logic live in hooks/stores,
-not inside the component body.
+Components render UI from props.
+Data fetching and business logic live in hooks or stores.
+Keep component bodies focused on rendering.
 
-## Function components, typed props, no `React.FC`
+## Use function components
+
+Use typed props and plain functions.
+Do not use `React.FC`.
 
 ```tsx
-// ❌ React.FC (implicit children, awkward generics)
+// ❌ React.FC adds implicit children and awkward generics
 const InvoiceRow: React.FC<{ invoice: Invoice }> = ({ invoice }) => { /* ... */ };
 
-// ✅ plain function with a typed props object
+// ✅ plain function with typed props
 type InvoiceRowProps = { invoice: Invoice; onSelect?: (id: string) => void };
 export function InvoiceRow({ invoice, onSelect }: InvoiceRowProps) {
   return <tr onClick={() => onSelect?.(invoice.id)}>{invoice.id}</tr>;
 }
 ```
 
-## Separate "what to show" from "how to get it"
+## Separate rendering from data loading
 
-Keep presentational components free of `useQuery`/`fetch`. A container/hook supplies data.
+Keep presentational components free of `useQuery` and `fetch`.
+A container or hook supplies data.
 
 ```tsx
 // ❌ fetching inside a presentational component
@@ -33,7 +38,7 @@ function InvoiceList() {
   return /* ... */;
 }
 
-// ✅ data comes from a hook; the component just renders
+// ✅ data comes from a hook; the component renders
 function InvoiceListContainer() {
   const { data, isLoading } = useInvoices();
   if (isLoading) return <Spinner />;
@@ -41,19 +46,26 @@ function InvoiceListContainer() {
 }
 ```
 
-## Compose, don't over-configure
+## Compose before configuring
 
-Build from small components and `children`/slots rather than one component with many
-boolean flags. Extract a shared component only after a third real use.
+Build small components with props, children, and slots.
+Avoid one component with many boolean flags.
+Extract shared components only after a third real use.
 
 ## Rules
-- No business logic in components — derive it in a hook or selector.
-- Effects (`useEffect`) only for synchronizing with external systems, not for deriving
-  state you can compute during render.
-- Stable keys for lists (never the array index when items reorder).
+
+- Keep business logic out of presentational components.
+- Derive display state in hooks or selectors when it grows.
+- Use `useEffect` only to synchronize with external systems.
+- Do not use effects for state that can be computed during render.
+- Use stable list keys.
+- Never use array indexes as keys when items can reorder.
 
 ## Checklist
-- [ ] Function component with a typed props type; no `React.FC`.
-- [ ] No `fetch`/`useQuery`/business logic in presentational components.
-- [ ] Composed from small pieces, not a flag-heavy mega-component.
-- [ ] Effects only synchronize with the outside world.
+
+- [ ] Component is a plain function with typed props.
+- [ ] No `React.FC`.
+- [ ] Presentational components do not fetch data.
+- [ ] Business logic lives in a hook, selector, or service.
+- [ ] Composition is preferred over flag-heavy configuration.
+- [ ] Effects synchronize with external systems only.

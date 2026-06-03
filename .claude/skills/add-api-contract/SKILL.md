@@ -1,15 +1,7 @@
 ---
 name: add-api-contract
-description: >-
-  Create or extend a shared zod schema that is the single source of truth for a
-  data shape crossing the FE/BE boundary, then wire it into backend validation
-  and a typed frontend client call.
-when_to_use: >-
-  Use WHEN adding or changing an API request/response shape, a DTO, or any data
-  contract shared between the Express backend and the React frontend (e.g. "add
-  a field to the user payload", "define the search request schema", "type this
-  endpoint's response"). Do NOT use for internal-only types that never cross the
-  boundary, or for DB schema/migrations (use the schema-migration subagent).
+description: "Create or extend a shared zod schema as the single source of truth for a FE/BE API shape, then wire backend parsing and a typed frontend call."
+when_to_use: "Use WHEN adding or changing an API request shape, response shape, DTO, or React/Express boundary contract. Do NOT use for internal-only types or DB schema changes; use the schema-migration subagent for schema and migration work."
 argument-hint: "[contract-name]"
 arguments: [contract]
 model: sonnet
@@ -17,32 +9,32 @@ model: sonnet
 
 # Add or extend a shared API contract
 
-Define the shape once in zod; both sides import it. Contract: `$contract`.
+Define the shape once in zod, and import it from both sides. Contract: `$contract`.
 
 ## Step 1 — Locate the shared module
 
-Find where shared schemas live (see `references/zod-patterns.md` → "Where it lives").
-In a monorepo it's the shared package; otherwise an environment-neutral dir
-(`src/shared`, `src/contracts`) importable by FE and BE. Reuse the existing location.
+Find where shared schemas live, using `references/zod-patterns.md` section "Where it lives".
+Use the existing shared package in a monorepo, or the existing environment-neutral directory such as `src/shared` or `src/contracts`.
+Create a shared location only when none exists.
 
-## Step 2 — Define schema first, derive types and variants
+## Step 2 — Define schema first
 
-Read `references/zod-patterns.md` and apply it:
-- Write the base `z.object` schema with real constraints (uuid, int, min/max, enum).
-- `export type X = z.infer<typeof XSchema>` — never a hand-written parallel interface.
-- Derive request/response variants with `.pick/.omit/.partial/.extend` instead of
-  copy-pasting fields.
+Read `references/zod-patterns.md` and apply it.
+- Write a base `z.object` schema with real constraints such as uuid, int, min/max, and enum.
+- Export types with `z.infer`; do not write a parallel interface.
+- Derive request and response variants with `.pick`, `.omit`, `.partial`, or `.extend`.
 
-## Step 3 — Wire the backend (parse at the boundary)
+## Step 3 — Wire the backend
 
-In the route/controller, replace any raw `req.body` access with `Schema.parse(...)`.
-If a validation middleware pattern already exists, follow it; otherwise parse inline and
-forward failures via `next(err)`.
+Parse `req.body`, `req.params`, and `req.query` at the route boundary with the shared schema.
+Follow any existing validation middleware pattern; otherwise parse inline and forward failures with `next(err)`.
+Keep handlers thin: parse input, call the service, shape the response.
 
-## Step 4 — Wire the frontend (typed client + parse the response)
+## Step 4 — Wire the frontend
 
-In the calling hook/service, type the request with the derived body type and parse the
-response with the response schema so the UI trusts typed data.
+Type request data from the derived schema type.
+Parse API responses with the response schema before UI code trusts them.
+Reuse the project's existing API client.
 
 ## Step 5 — Verify
 
@@ -54,8 +46,9 @@ run_typecheck
 Confirm both sides import the same schema and no duplicate interface remains.
 
 ## Checklist
-- [ ] Schema defined once in the shared, environment-neutral module.
-- [ ] Type is `z.infer`; variants derived (no copy-paste, no duplicate interface).
-- [ ] Backend parses input at the boundary with the schema.
-- [ ] Frontend parses the response and types the request from the schema.
-- [ ] `run_typecheck` passes on both sides.
+
+- [ ] Schema lives once in a shared, environment-neutral module.
+- [ ] Types use `z.infer`, and variants are derived without copy-paste.
+- [ ] Backend parses untrusted input at the boundary.
+- [ ] Frontend parses responses and types requests from the schema.
+- [ ] `run_typecheck` passes.

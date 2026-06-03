@@ -5,13 +5,13 @@ paths:
 
 # Testing conventions
 
-Runner-agnostic (Vitest or Jest — both expose `describe/it/expect`). Test files sit
-next to the code they cover.
+Vitest and Jest both expose `describe`, `it`, and `expect`.
+Put tests next to the code they cover.
 
-## Test behavior, not implementation
+## Test behavior
 
-Assert on observable outcomes (return values, rendered output, calls to a mocked
-boundary), not private internals.
+Assert observable outcomes.
+Do not assert private internals.
 
 ```ts
 // ❌ couples the test to internal structure
@@ -20,13 +20,15 @@ expect(service._cache.size).toBe(1);
 expect(await service.getInvoice("id")).toEqual(invoice);
 ```
 
-## Arrange–Act–Assert
+## Use Arrange–Act–Assert
 
-Keep the three phases visible; one logical behavior per test.
+Keep setup, action, and assertion visible.
+Test one logical behavior per test.
 
-## Services: mock the repository interface
+## Mock repository interfaces
 
-A service depends on a repository interface — inject a fake/mock in tests, no real DB.
+Service tests use a fake or mock repository interface.
+Do not use a real DB in service unit tests.
 
 ```ts
 const mockFn = vi.fn; // or jest.fn in a Jest project
@@ -34,9 +36,10 @@ const repo: InvoiceRepository = { findById: mockFn().mockResolvedValue(invoice) 
 const service = createInvoiceService(repo);
 ```
 
-## Components: React Testing Library, user-centric queries
+## Test components like users
 
-Query by role/label/text as a user would; avoid test-id unless nothing else fits.
+Use React Testing Library queries by role, label, or text.
+Avoid test IDs unless no user-facing query fits.
 
 ```tsx
 // ✅
@@ -44,18 +47,21 @@ render(<InvoiceList invoices={[invoice]} />);
 expect(screen.getByRole("row", { name: /acme/i })).toBeInTheDocument();
 ```
 
-## Anything using TanStack Query: fresh client, retries off
+## Use fresh Query clients
+
+Anything using TanStack Query gets a fresh client with retries off.
 
 ```tsx
 const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>);
 ```
 
-Use MSW to mock HTTP rather than stubbing `fetch` ad hoc.
+Prefer MSW over ad hoc `fetch` stubs.
 
 ## Checklist
-- [ ] Test file colocated with the unit under test.
-- [ ] Assertions target behavior, not private state.
-- [ ] Services tested against a mocked repository interface.
-- [ ] Components queried by role/label/text, not test-id.
+
+- [ ] Test file is colocated with the unit under test.
+- [ ] Assertions target behavior.
+- [ ] Services use mocked repository interfaces.
+- [ ] Components query by role, label, or text.
 - [ ] Query-backed components use a fresh client with `retry: false`.

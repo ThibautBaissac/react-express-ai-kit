@@ -1,14 +1,7 @@
 ---
 name: write-tests
-description: >-
-  Write colocated tests for React + Express + TypeScript code following the
-  project's conventions — services tested against a mocked repository interface,
-  components tested with React Testing Library and TanStack Query.
-when_to_use: >-
-  Use WHEN the user asks to write/add tests, improve coverage, or test a
-  specific module, service, hook, or component. Auto-detects Vitest vs Jest.
-  Do NOT use to run an existing suite (use /run-checks for that) or to debug a
-  failing build unrelated to test authoring.
+description: "Write colocated tests for React + Express + TypeScript code using the project's runner, conventions, mocked repository interfaces, React Testing Library, and TanStack Query patterns."
+when_to_use: "Use WHEN the user asks to add tests, improve coverage, or test a module, service, hook, component, route, or feature. Do NOT use to run an existing suite; use /run-checks for that."
 argument-hint: "[path-to-test]"
 arguments: [target]
 model: sonnet
@@ -16,46 +9,47 @@ model: sonnet
 
 # Write tests to convention
 
-Target: `$target` (a file, dir, or feature). Tests live next to the code under test.
+Target: `$target`. Put tests next to the code under test.
 
-## Step 1 — Detect the runner and existing style
+## Step 1 — Detect runner and style
 
 ```bash
 bash "${CLAUDE_PROJECT_DIR}/.claude/lib/detect-toolchain.sh"
 ```
 
-Open a nearby existing test to copy the project's import style (`vitest` vs
-`@jest/globals` vs globals), setup files, and mocking helpers (`vi.fn` vs `jest.fn`).
-Read `references/test-patterns.md` for the canonical patterns.
+Open nearby tests before writing new ones.
+Match the project's import style, setup files, mock helpers, and naming.
+Read `references/test-patterns.md` for canonical patterns.
 
-## Step 2 — Pick the right kind of test per layer
+## Step 2 — Pick the test type
 
-- **Service** → unit test with a mocked repository interface (no DB, no HTTP).
-- **Repository** → integration test only if the project has a test DB harness; otherwise
-  skip and note it.
-- **Hook / component using server data** → React Testing Library + a fresh QueryClient
-  with `retry: false`; mock HTTP with MSW if the project uses it.
-- **Presentational component** → render and assert on role/label/text.
-- **Route** → optional supertest-style integration test if that pattern already exists.
+- Service tests use a mocked repository interface and no DB or HTTP.
+- Repository tests are integration tests only when the project already has a test DB harness.
+- Query-backed hooks and components use React Testing Library with a fresh QueryClient and `retry: false`.
+- Presentational components render with props and assert by role, label, or text.
+- Route tests use the project's existing supertest-style pattern when one exists.
 
-## Step 3 — Write behavior-focused tests
+## Step 3 — Write behavior tests
 
-Arrange–Act–Assert; assert observable outcomes, not private internals. Cover the happy
-path plus the meaningful error/edge cases (not-found, validation failure, empty list).
+Use Arrange–Act–Assert.
+Assert observable outcomes, not private internals.
+Cover the happy path plus meaningful error or edge cases.
 
-## Step 4 — Run just the new tests
+## Step 4 — Run new tests
 
 ```bash
 source "${CLAUDE_PROJECT_DIR}/.claude/lib/detect-toolchain.sh"
 run_tests <new-test-path>
 ```
 
-Iterate until green. Report coverage of behaviors, not a percentage.
+Iterate until the new tests pass.
+Report covered behaviors, not a coverage percentage.
 
 ## Checklist
-- [ ] Runner + existing test style detected and matched.
-- [ ] Test file colocated with the code under test.
-- [ ] Services tested via a mocked repository interface.
-- [ ] Query-backed UI uses a fresh client with `retry: false`; user-centric queries.
-- [ ] Behavior asserted (incl. an error/edge case), not implementation details.
-- [ ] New tests run green via the detected runner.
+
+- [ ] Runner and local test style were detected.
+- [ ] Test file is colocated with the code under test.
+- [ ] Services use a mocked repository interface.
+- [ ] Query-backed UI uses a fresh QueryClient with `retry: false`.
+- [ ] Assertions target user-visible behavior or boundary calls.
+- [ ] New tests pass through the detected runner.

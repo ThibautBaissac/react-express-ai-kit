@@ -5,12 +5,13 @@ paths:
   - "**/*.store.ts"
 ---
 
-# Global state (Zustand) — UI state only
+# Global state — UI state only
 
-Use a store for global **client/UI** state (theme, sidebar, multi-step wizard,
-selections). Server data stays in TanStack Query — don't mirror it here.
+Use stores for global client/UI state such as theme, sidebar, wizard step, and selections.
+Keep server data in TanStack Query.
+Do not mirror server data in Zustand.
 
-## Don't duplicate server state
+## Do not duplicate server state
 
 ```ts
 // ❌ server data copied into the store goes stale and forks the source of truth
@@ -30,19 +31,23 @@ export const useInvoiceUi = create<UiState>((set) => ({
 }));
 ```
 
-## SRP slices, selector subscriptions
+## Keep stores small
 
-- One small store (or slice) per concern; don't build a single global megastore.
-- Subscribe with a selector so components re-render only on the slice they read.
+Use one small store or slice per concern.
+Do not build one global megastore.
+Subscribe with selectors so components re-render only for the state they read.
 
 ```ts
 const selectedId = useInvoiceUi((s) => s.selectedInvoiceId); // ✅ narrow selector
 ```
 
-- Keep actions in the store next to the state they mutate; keep them pure and minimal.
+Keep actions next to the state they mutate.
+Keep actions pure and minimal.
 
 ## Checklist
-- [ ] Store holds UI/client state only — no cached server data.
-- [ ] One cohesive concern per store/slice (SRP).
-- [ ] Components subscribe via narrow selectors, not the whole store.
-- [ ] Actions colocated with the state they change.
+
+- [ ] Store holds UI/client state only.
+- [ ] Server data stays in TanStack Query.
+- [ ] Store or slice has one concern.
+- [ ] Components subscribe with narrow selectors.
+- [ ] Actions are colocated with the state they change.

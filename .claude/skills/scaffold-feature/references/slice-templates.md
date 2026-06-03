@@ -1,7 +1,8 @@
 # Vertical-slice templates
 
-Adapt these to the detected layout and naming. `Invoice` is the example feature; replace
-with the real name. Keep generated code minimal — delete parts the feature doesn't need.
+Adapt these templates to the detected layout and naming.
+`Invoice` is the example feature; replace it with the real feature name.
+Keep generated code minimal, and delete parts the feature does not need.
 
 ## 1. Shared contract — `invoice.schema.ts`
 
@@ -17,7 +18,7 @@ export const InvoiceSchema = z.object({
 });
 export type Invoice = z.infer<typeof InvoiceSchema>;
 
-// Derived request/response shapes (don't redeclare).
+// Derived request/response shapes; do not redeclare fields.
 export const CreateInvoiceBody = InvoiceSchema.pick({ customer: true, amountCents: true });
 export type CreateInvoiceBody = z.infer<typeof CreateInvoiceBody>;
 
@@ -25,7 +26,7 @@ export const InvoiceListResponse = z.object({ items: z.array(InvoiceSchema) });
 export type InvoiceListResponse = z.infer<typeof InvoiceListResponse>;
 ```
 
-## 2. Repository — `invoice.repository.ts` (ORM-agnostic)
+## 2. Repository — `invoice.repository.ts`
 
 ```ts
 import type { Invoice, CreateInvoiceBody } from "../shared/invoice.schema";
@@ -36,9 +37,7 @@ export interface InvoiceRepository {
   insert(data: CreateInvoiceBody): Promise<Invoice>;
 }
 
-// Implementation behind the interface. Replace the body with your ORM/driver and map
-// rows to domain types (parse with InvoiceSchema to guard drift). See the
-// schema-migration subagent to wire up the actual data store.
+// Replace these bodies with the repo's ORM or driver, then parse rows with InvoiceSchema to guard drift.
 export function createInvoiceRepository(/* db */): InvoiceRepository {
   return {
     async findById(_id) { throw new Error("not implemented"); },
@@ -70,7 +69,7 @@ export function createInvoiceService(repo: InvoiceRepository) {
 export type InvoiceService = ReturnType<typeof createInvoiceService>;
 ```
 
-## 4. Routes — `invoice.routes.ts` (thin)
+## 4. Routes — `invoice.routes.ts`
 
 ```ts
 import { Router } from "express";
@@ -94,7 +93,7 @@ export function invoiceRoutes(service: InvoiceService): Router {
 
   return router;
 }
-// Register where other routers mount, e.g. app.use("/api/invoices", invoiceRoutes(service)).
+// Register where existing routers mount, such as app.use("/api/invoices", invoiceRoutes(service)).
 ```
 
 ## 5. Hook — `hooks/useInvoices.ts`
@@ -122,7 +121,9 @@ export function useCreateInvoice() {
 }
 ```
 
-## 6. Store — `store/invoice.store.ts` (only if UI state is needed)
+## 6. Store — `store/invoice.store.ts`
+
+Create this only when UI state is needed.
 
 ```ts
 import { create } from "zustand";
@@ -156,7 +157,7 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
 }
 ```
 
-Container that supplies data (keeps the list presentational):
+The container supplies data and keeps the list presentational.
 
 ```tsx
 import { useInvoices } from "../hooks/useInvoices";
@@ -170,4 +171,4 @@ export function InvoiceListContainer() {
 }
 ```
 
-See the `write-tests` skill for the matching colocated tests.
+Use the `write-tests` skill for colocated tests.

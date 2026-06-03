@@ -5,12 +5,14 @@ paths:
 
 # TypeScript conventions
 
-Applies to every `.ts`/`.tsx` file. Assumes `strict: true`.
+These rules apply to every `.ts` and `.tsx` file.
+Assume `strict: true`.
 
-## No `any`, no unsafe escapes
+## Avoid unsafe escapes
 
-`any` disables type checking and spreads silently. Use `unknown` at boundaries and
-narrow, or define a real type.
+`any` disables type checking and spreads silently.
+Use `unknown` at boundaries, then narrow or parse.
+Define real types for known data.
 
 ```ts
 // ❌ defeats the type system
@@ -23,12 +25,13 @@ function handle(payload: unknown) {
 }
 ```
 
-Avoid `as` casts except for genuinely unavoidable boundaries; never `as any` or `as unknown as T`.
+Avoid casts except at unavoidable boundaries.
+Never use `as any` or `as unknown as T`.
 
-## Infer, don't restate
+## Infer locals
 
-Let TypeScript infer locals and return types of simple functions. Annotate exported
-function signatures and public contracts.
+Let TypeScript infer locals and simple return types.
+Annotate exported function signatures and public contracts.
 
 ```ts
 // ❌ noisy and drift-prone
@@ -37,9 +40,10 @@ const items: Array<{ id: string }> = data.map((d): { id: string } => ({ id: d.id
 const items = data.map((d) => ({ id: d.id }));
 ```
 
-## Model states with discriminated unions
+## Model states with unions
 
-Make illegal states unrepresentable instead of carrying optional flags that must agree.
+Use discriminated unions so illegal states cannot compile.
+Avoid optional flags that must agree.
 
 ```ts
 // ❌ which fields are valid when?
@@ -50,9 +54,9 @@ type Result =
   | { ok: false; error: string };
 ```
 
-## Exhaustive switches
+## Make switches exhaustive
 
-Use a `never` default so adding a variant becomes a compile error.
+Use a `never` default so new variants create compile errors.
 
 ```ts
 function area(s: Shape): number {
@@ -64,14 +68,16 @@ function area(s: Shape): number {
 }
 ```
 
-## Prefer `type` for contracts; avoid `enum`
+## Prefer type unions
 
-Use `type`/union literals for data contracts (better inference, zod-friendly). Prefer
-`as const` object maps or string-literal unions over TS `enum`.
+Use `type` and union literals for data contracts.
+Prefer `as const` object maps or string-literal unions over TypeScript `enum`.
 
 ## Checklist
-- [ ] No `any` and no `as any` / double casts.
-- [ ] Return types inferred for trivial fns; annotated for exported APIs.
-- [ ] Optional-flag soup replaced by discriminated unions.
-- [ ] Switches over unions are exhaustive (`never` guard).
+
+- [ ] No `any`.
+- [ ] No `as any` or double casts.
+- [ ] Exported APIs have explicit contracts.
+- [ ] Optional-flag state is modeled as a discriminated union.
+- [ ] Union switches are exhaustive.
 - [ ] Boundaries take `unknown` and parse.

@@ -1,16 +1,16 @@
-# Test patterns (Vitest or Jest)
+# Test patterns
 
-Both runners share `describe/it/expect`. The only differences are imports and the mock
-factory (`vi` vs `jest`). Match whatever the project already uses.
+Vitest and Jest both support `describe`, `it`, and `expect`.
+Match the project's existing import style and mock factory.
 
 ```ts
 // Vitest
 import { describe, it, expect, vi } from "vitest";
-// Jest (globals enabled) — no import; or:
+// Jest with globals enabled uses no import, or:
 import { describe, it, expect, jest } from "@jest/globals";
 ```
 
-In examples below, define a local `mockFn` helper for the detected runner:
+Define a local `mockFn` helper for the detected runner.
 
 ```ts
 // Vitest
@@ -45,7 +45,9 @@ describe("invoiceService.get", () => {
 });
 ```
 
-## Component — React Testing Library, user-centric queries
+## Component — React Testing Library
+
+Use user-centric queries.
 
 ```tsx
 import { render, screen } from "@testing-library/react";
@@ -57,7 +59,9 @@ it("renders a row per invoice", () => {
 });
 ```
 
-## Component/hook using TanStack Query — fresh client, retries off
+## Query-backed component or hook
+
+Use a fresh QueryClient with retries off.
 
 ```tsx
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -75,13 +79,17 @@ it("shows invoices once loaded", async () => {
 });
 ```
 
-## Mocking HTTP — prefer MSW over stubbing fetch
+## Mocking HTTP
 
-If the project uses MSW, define handlers in a shared `server` and `server.use(...)` per
-test for error cases. Otherwise mock the project's API client module, not global `fetch`.
+Prefer MSW over stubbing `fetch`.
+If the project uses MSW, define handlers in a shared `server` and call `server.use(...)` per test for error cases.
+Otherwise mock the project's API client module, not global `fetch`.
 
 ## Do / don't
-- ✅ One behavior per test; descriptive names ("throws when missing").
-- ✅ Cover an error/edge path, not only the happy path.
-- ❌ Asserting private fields, call order that doesn't matter, or snapshotting large trees.
-- ❌ Real network or real DB in unit tests.
+
+- ✅ One behavior per test.
+- ✅ Use descriptive names such as "throws when missing".
+- ✅ Cover an error or edge path, not only the happy path.
+- ❌ Do not assert private fields or irrelevant call order.
+- ❌ Do not snapshot large trees.
+- ❌ Do not use a real network or real DB in unit tests.

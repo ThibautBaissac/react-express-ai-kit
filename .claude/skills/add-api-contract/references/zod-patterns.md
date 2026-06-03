@@ -2,13 +2,13 @@
 
 ## Where it lives
 
-Shared schemas must be importable by both the browser bundle and Node. Put them in the
-monorepo shared package, or an environment-neutral dir (`src/shared`, `src/contracts`).
-No Express, React, or DB-client imports in these files.
+Shared schemas must work in both the browser bundle and Node.
+Use the monorepo shared package, or use an environment-neutral directory such as `src/shared` or `src/contracts`.
+Do not import Express, React, DB clients, or runtime-specific modules here.
 
 ## Parse, don't validate
 
-Convert `unknown` into a typed value at the boundary, then trust the type.
+Convert `unknown` into typed data at the boundary, then trust the type.
 
 ```ts
 // ✅ returns a typed value or throws
@@ -40,14 +40,18 @@ export const PublicUser     = UserSchema.omit({ /* secrets */ });   // response
 export const UserListResponse = z.object({ items: z.array(UserSchema) });
 ```
 
-## Branded types for identifiers (optional, when mix-ups have bitten you)
+## Branded types for identifiers
+
+Use branded ids only when plain strings have caused real mix-ups.
 
 ```ts
 export const UserId = z.string().uuid().brand<"UserId">();
 export type UserId = z.infer<typeof UserId>; // not assignable from a plain string
 ```
 
-## Coercion for query params (strings in, typed out)
+## Coercion for query params
+
+Query params arrive as strings, so coerce them at the boundary.
 
 ```ts
 export const Pagination = z.object({
@@ -56,7 +60,9 @@ export const Pagination = z.object({
 });
 ```
 
-## Reusable Express validation middleware (if the project wants one)
+## Reusable Express validation middleware
+
+Use middleware only when the project already wants that pattern.
 
 ```ts
 import type { RequestHandler } from "express";
@@ -73,7 +79,7 @@ export const validateBody =
 ```
 
 ## Anti-patterns
-- A separate `interface` mirroring the schema (drifts immediately).
-- Validating only on one side of the boundary.
-- Putting business rules in `.refine()` that belong in the service (keep schemas about
-  shape/format; cross-entity rules live in the service).
+
+- Do not mirror a schema with a separate `interface`; it drifts.
+- Do not validate only one side of the FE/BE boundary.
+- Do not put cross-entity business rules in `.refine()`; services own those rules.

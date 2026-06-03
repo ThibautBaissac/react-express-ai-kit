@@ -6,15 +6,16 @@ paths:
   - "**/*.schema.ts"
 ---
 
-# Shared API contracts (zod)
+# Shared API contracts
 
-These files are the single source of truth for data shapes crossing the FE/BE boundary.
-Both sides import them — never redeclare a shape on one side.
+These files are the single source of truth for FE/BE data shapes.
+Both sides import them.
+Never redeclare the same shape on one side.
 
-## Schema first, type derived
+## Define schema first
 
-Define the zod schema, then infer the TypeScript type. Don't hand-write a parallel
-`interface`.
+Define the zod schema, then infer the TypeScript type.
+Do not hand-write a parallel `interface`.
 
 ```ts
 // ✅ one source of truth
@@ -31,7 +32,10 @@ export type Invoice = z.infer<typeof InvoiceSchema>;
 export interface Invoice { id: string; amountCents: number; status: string; }
 ```
 
-## Derive request/response shapes — don't repeat
+## Derive variants
+
+Derive request and response shapes from the base schema.
+Do not repeat fields by hand.
 
 ```ts
 export const CreateInvoiceBody = InvoiceSchema.omit({ id: true, status: true });
@@ -40,20 +44,23 @@ export type CreateInvoiceBody = z.infer<typeof CreateInvoiceBody>;
 export const InvoiceListResponse = z.object({ items: z.array(InvoiceSchema) });
 ```
 
-Use `.pick()`, `.omit()`, `.partial()`, `.extend()` to derive variants from the base.
+Use `.pick()`, `.omit()`, `.partial()`, and `.extend()` for variants.
 
-## Keep this layer environment-neutral
+## Keep contracts environment-neutral
 
-No Express, no React, no DB-client imports here. These modules must be importable by
-both the browser bundle and Node without pulling in server- or client-only deps.
+Do not import Express, React, DB clients, or server/client-only modules.
+Contracts must work in both the browser bundle and Node.
 
-## Stable, versioned, additive
+## Prefer additive changes
 
-Treat published shapes like an API. Prefer additive changes; make breaking changes
-explicit (e.g. `InvoiceV2Schema`).
+Treat published shapes like an API.
+Prefer additive changes.
+Make breaking changes explicit, such as `InvoiceV2Schema`.
 
 ## Checklist
-- [ ] Type is `z.infer` of the schema, not a separate interface.
-- [ ] Variants derived with pick/omit/partial/extend, not copy-paste.
-- [ ] No server- or client-only imports in this module.
-- [ ] Field constraints (uuid, int, min/max, enum) encoded in the schema.
+
+- [ ] Type is `z.infer` of the schema.
+- [ ] No parallel interface duplicates the schema.
+- [ ] Variants are derived, not copy-pasted.
+- [ ] Module has no server-only or client-only imports.
+- [ ] Field constraints are encoded in zod.

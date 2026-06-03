@@ -4,14 +4,15 @@ paths:
   - "**/use*.{ts,tsx}"
 ---
 
-# Custom hooks — one responsibility, server state via TanStack Query
+# Custom hooks — one responsibility
 
-Hooks encapsulate stateful logic so components stay presentational. Each hook does one
-thing.
+Hooks encapsulate stateful logic so components stay presentational.
+Each hook should do one job.
 
-## Server state belongs to TanStack Query
+## Use TanStack Query for server state
 
-Fetch, cache, and mutate server data with Query — not `useEffect` + `useState`.
+Fetch, cache, and mutate server data with Query.
+Do not hand-roll server state with `useEffect` and `useState`.
 
 ```ts
 // ✅ server state via Query, parsed at the edge
@@ -24,7 +25,7 @@ export function useInvoices() {
 ```
 
 ```ts
-// ❌ hand-rolled fetching: no caching, dedupe, or status handling
+// ❌ hand-rolled fetching has no caching, dedupe, or status handling
 export function useInvoices() {
   const [data, setData] = useState<Invoice[]>([]);
   useEffect(() => { fetch("/api/invoices").then(r => r.json()).then(setData); }, []);
@@ -32,7 +33,10 @@ export function useInvoices() {
 }
 ```
 
-## Mutations invalidate, they don't manually patch caches
+## Invalidate after mutations
+
+Mutations invalidate affected query keys.
+Do not manually mirror server cache state unless the project already uses that pattern for optimistic updates.
 
 ```ts
 export function useCreateInvoice() {
@@ -45,14 +49,19 @@ export function useCreateInvoice() {
 ```
 
 ## Rules
-- One concern per hook; compose hooks rather than growing one giant hook.
-- Obey the rules of hooks: call unconditionally at the top level.
-- Memoize returned objects/callbacks (`useMemo`/`useCallback`) only when an identity-
-  sensitive consumer needs it — not reflexively.
-- Centralize query keys for a feature so invalidation stays consistent.
+
+- Keep one concern per hook.
+- Compose hooks instead of growing one hook into a controller.
+- Call hooks unconditionally at the top level.
+- Memoize returned objects or callbacks only for identity-sensitive consumers.
+- Centralize query keys for each feature.
+- Parse responses with shared zod schemas.
 
 ## Checklist
-- [ ] Server data uses `useQuery`/`useMutation`, not `useEffect` fetching.
-- [ ] Responses parsed with the shared zod schema.
-- [ ] Mutations invalidate affected query keys on success.
-- [ ] Hook has a single responsibility and stable query keys.
+
+- [ ] Server data uses `useQuery` or `useMutation`.
+- [ ] No `useEffect` fetching for server state.
+- [ ] Responses are parsed with shared zod schemas.
+- [ ] Mutations invalidate affected query keys.
+- [ ] Hook has one responsibility.
+- [ ] Query keys are stable and centralized.
