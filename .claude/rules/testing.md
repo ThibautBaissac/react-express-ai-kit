@@ -29,7 +29,8 @@ Keep the three phases visible; one logical behavior per test.
 A service depends on a repository interface — inject a fake/mock in tests, no real DB.
 
 ```ts
-const repo: InvoiceRepository = { findById: vi.fn().mockResolvedValue(invoice) };
+const mockFn = vi.fn; // or jest.fn in a Jest project
+const repo: InvoiceRepository = { findById: mockFn().mockResolvedValue(invoice) };
 const service = createInvoiceService(repo);
 ```
 

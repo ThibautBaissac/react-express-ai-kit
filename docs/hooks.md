@@ -38,7 +38,7 @@ A hook entry references a script; keep scripts in `.claude/hooks/` and call them
 | `SessionStart` | Session begins/resumes | — | Inject context, set up env |
 | `UserPromptSubmit` | Before Claude sees your prompt | ✅ | Validate/augment the prompt |
 | `PreToolUse` | Before a tool runs | ✅ | Allow/deny/ask, rewrite input |
-| `PostToolUse` | After a tool succeeds | ✅ | Format/lint, run checks |
+| `PostToolUse` | After a tool succeeds | Feedback only | Format/lint, run checks |
 | `Stop` | Claude finishes responding | ✅ | Enforce "not done until X" |
 | `SubagentStop` | A subagent finishes | ✅ | Post-process subagent output |
 | `PreCompact` / `PostCompact` | Around context compaction | ✅ (Pre) | Preserve/restore state |
@@ -106,10 +106,11 @@ For `PostToolUse` on an edit you'd read `tool_input.file_path`; for `UserPromptS
 | `2` | **Blocking error.** stderr is sent to Claude; the action is blocked on blockable events. |
 | other | Non-blocking error; logged, execution continues. |
 
-Exit 2 is how you turn a check into a gate. This repo's
+Exit 2 is how you turn a check into a gate on blockable events. This repo's
 [`post-edit-check.sh`](../.claude/hooks/post-edit-check.sh) lints the edited file and, on
-errors, prints them to stderr and `exit 2` — so Claude sees the lint failure and fixes it
-before moving on.
+errors, prints them to stderr and `exit 2`. Because `PostToolUse` runs after the edit has
+already happened, this does not undo or block the edit; it feeds the lint failure back to
+Claude so it can fix it before moving on.
 
 ### Output: structured JSON (exit 0)
 
@@ -122,7 +123,7 @@ For richer control, print JSON on stdout:
     "permissionDecision": "ask",
     "permissionDecisionReason": "Lockfile says pnpm but command uses npm.",
     "additionalContext": "…",
-    "modifiedInput": { "command": "pnpm add left-pad" }
+    "updatedInput": { "command": "pnpm add left-pad" }
   }
 }
 ```
@@ -136,7 +137,7 @@ Key fields:
 - **`additionalContext`**: text injected for Claude. This repo's
   [`report-toolchain.sh`](../.claude/hooks/report-toolchain.sh) (a `SessionStart` hook) uses
   it to announce the detected package manager + test runner.
-- **`modifiedInput`**: rewrite the tool input before it runs.
+- **`updatedInput`**: rewrite the tool input before it runs.
 - Top-level **`decision: "block"`** + **`reason`** is the simpler block form for events like
   `UserPromptSubmit` / `Stop`.
 

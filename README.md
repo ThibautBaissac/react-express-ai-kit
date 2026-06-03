@@ -91,7 +91,7 @@ generation, **haiku** for mechanical work.
 | Event | Script | Behavior |
 | --- | --- | --- |
 | `SessionStart` | `report-toolchain.sh` | Tells Claude the detected package manager + test runner and a one-line architecture reminder. |
-| `PostToolUse` (Edit/Write) | `post-edit-check.sh` | Formats the edited `.ts/.tsx` file and lints it; blocks on lint errors so Claude self-corrects. |
+| `PostToolUse` (Edit/Write) | `post-edit-check.sh` | Formats the edited `.ts/.tsx` file and lints it; reports lint errors back to Claude so it can self-correct. |
 | `PreToolUse` (Bash) | `guard-package-manager.sh` | Asks for confirmation if a command installs deps with a package manager that contradicts the lockfile. |
 
 The format/lint and prettier steps run only if those tools are installed locally (no

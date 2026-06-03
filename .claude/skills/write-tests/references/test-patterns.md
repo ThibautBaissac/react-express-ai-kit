@@ -10,7 +10,14 @@ import { describe, it, expect, vi } from "vitest";
 import { describe, it, expect, jest } from "@jest/globals";
 ```
 
-In examples below, `mockFn` = `vi.fn()` (Vitest) or `jest.fn()` (Jest).
+In examples below, define a local `mockFn` helper for the detected runner:
+
+```ts
+// Vitest
+const mockFn = vi.fn;
+// Jest
+const mockFn = jest.fn;
+```
 
 ## Service — mock the repository interface
 
@@ -22,17 +29,17 @@ const invoice = { id: "11111111-1111-1111-1111-111111111111", customer: "Acme",
   amountCents: 100, status: "draft", createdAt: new Date().toISOString() };
 
 function makeRepo(over: Partial<InvoiceRepository> = {}): InvoiceRepository {
-  return { findById: vi.fn(), list: vi.fn(), insert: vi.fn(), ...over };
+  return { findById: mockFn(), list: mockFn(), insert: mockFn(), ...over };
 }
 
 describe("invoiceService.get", () => {
   it("returns the invoice when found", async () => {
-    const service = createInvoiceService(makeRepo({ findById: vi.fn().mockResolvedValue(invoice) }));
+    const service = createInvoiceService(makeRepo({ findById: mockFn().mockResolvedValue(invoice) }));
     await expect(service.get(invoice.id)).resolves.toEqual(invoice);
   });
 
   it("throws NotFoundError when missing", async () => {
-    const service = createInvoiceService(makeRepo({ findById: vi.fn().mockResolvedValue(null) }));
+    const service = createInvoiceService(makeRepo({ findById: mockFn().mockResolvedValue(null) }));
     await expect(service.get("missing")).rejects.toBeInstanceOf(NotFoundError);
   });
 });

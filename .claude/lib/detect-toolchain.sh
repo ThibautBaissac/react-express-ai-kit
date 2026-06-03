@@ -9,9 +9,10 @@
 #   bash   "<path>/detect-toolchain.sh"      # prints a one-line summary
 #   bash   "<path>/detect-toolchain.sh" json # prints machine-readable summary
 #
-# Detection starts at $TOOLCHAIN_ROOT (or $CLAUDE_PROJECT_DIR, or $PWD) and walks
-# up to the nearest directory containing package.json — so it works from a
-# subdirectory and in monorepos.
+# Detection starts at $TOOLCHAIN_ROOT (or $CLAUDE_PROJECT_DIR, or $PWD). Scripts run
+# from the nearest package.json, while package manager detection walks upward to find
+# the workspace lockfile/packageManager field — so it works from a package inside a
+# monorepo.
 
 # --- locate the project root (nearest ancestor with package.json) -------------
 detect_project_root() {
@@ -26,6 +27,29 @@ detect_project_root() {
   # No package.json found: fall back to the starting directory.
   printf '%s\n' "${1:-${TOOLCHAIN_ROOT:-${CLAUDE_PROJECT_DIR:-$PWD}}}"
   return 1
+}
+
+# --- locate the workspace/config root used for lockfile + package manager -----
+detect_workspace_root() {
+  local dir="${1:-${TOOLCHAIN_ROOT:-${CLAUDE_PROJECT_DIR:-$PWD}}}"
+  local package_root=""
+  while [ "$dir" != "/" ] && [ -n "$dir" ]; do
+    if [ -f "$dir/pnpm-lock.yaml" ] || [ -f "$dir/yarn.lock" ] \
+      || [ -f "$dir/package-lock.json" ] || [ -f "$dir/npm-shrinkwrap.json" ]; then
+      printf '%s\n' "$dir"
+      return 0
+    fi
+    if [ -z "$package_root" ] && [ -f "$dir/package.json" ]; then
+      package_root="$dir"
+    fi
+    dir="$(dirname "$dir")"
+  done
+  if [ -n "$package_root" ]; then
+    printf '%s\n' "$package_root"
+  else
+    printf '%s\n' "${1:-${TOOLCHAIN_ROOT:-${CLAUDE_PROJECT_DIR:-$PWD}}}"
+    return 1
+  fi
 }
 
 # --- read a value from package.json (node if present, grep fallback) ----------
@@ -87,7 +111,8 @@ detect_test_runner() {
 
 # --- resolve and export everything -------------------------------------------
 PROJECT_ROOT="$(detect_project_root)"
-PM="$(detect_pm "$PROJECT_ROOT")"
+WORKSPACE_ROOT="$(detect_workspace_root "$PROJECT_ROOT")"
+PM="$(detect_pm "$WORKSPACE_ROOT")"
 TEST_RUNNER="$(detect_test_runner "$PROJECT_ROOT")"
 
 case "$PM" in
@@ -96,7 +121,7 @@ case "$PM" in
   *)    PM_RUN="npm run";  PM_EXEC="npx";         PM_DLX="npx" ;;
 esac
 
-export PROJECT_ROOT PM PM_RUN PM_EXEC PM_DLX TEST_RUNNER
+export PROJECT_ROOT WORKSPACE_ROOT PM PM_RUN PM_EXEC PM_DLX TEST_RUNNER
 
 # --- helper functions (use these instead of raw runner names) -----------------
 
@@ -174,7 +199,7 @@ if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
       printf '{"projectRoot":"%s","packageManager":"%s","testRunner":"%s"}\n' \
         "$PROJECT_ROOT" "$PM" "$TEST_RUNNER" ;;
     *)
-      printf 'Toolchain: package manager=%s, test runner=%s (root: %s)\n' \
-        "$PM" "$TEST_RUNNER" "$PROJECT_ROOT" ;;
+      printf 'Toolchain: package manager=%s, test runner=%s (root: %s, workspace: %s)\n' \
+        "$PM" "$TEST_RUNNER" "$PROJECT_ROOT" "$WORKSPACE_ROOT" ;;
   esac
 fi
