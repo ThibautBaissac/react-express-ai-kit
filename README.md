@@ -1,4 +1,4 @@
-# react_express_ts_ai_agents
+# react-express-ai-kit
 
 A drop-in collection of **Claude Code** extensibility artifacts — rules, skills, subagents, and hooks — tuned for a modular **React + Express + TypeScript** stack.
 
