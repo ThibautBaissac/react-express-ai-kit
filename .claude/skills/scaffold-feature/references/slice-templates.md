@@ -28,7 +28,7 @@ export type InvoiceListResponse = z.infer<typeof InvoiceListResponse>;
 ## 2. Repository — `invoice.repository.ts`
 
 ```ts
-import type { Invoice, CreateInvoiceBody } from "../shared/invoice.schema";
+import type { Invoice, CreateInvoiceBody } from "./invoice.schema";
 
 export interface InvoiceRepository {
   findById(id: string): Promise<Invoice | null>;
@@ -50,7 +50,7 @@ export function createInvoiceRepository(/* db */): InvoiceRepository {
 
 ```ts
 import type { InvoiceRepository } from "./invoice.repository";
-import type { CreateInvoiceBody, Invoice } from "../shared/invoice.schema";
+import type { CreateInvoiceBody, Invoice } from "./invoice.schema";
 
 export class NotFoundError extends Error {}
 
@@ -72,7 +72,7 @@ export type InvoiceService = ReturnType<typeof createInvoiceService>;
 
 ```ts
 import { Router } from "express";
-import { CreateInvoiceBody } from "../shared/invoice.schema";
+import { CreateInvoiceBody } from "./invoice.schema";
 import type { InvoiceService } from "./invoice.service";
 
 export function invoiceRoutes(service: InvoiceService): Router {
@@ -99,8 +99,8 @@ export function invoiceRoutes(service: InvoiceService): Router {
 
 ```ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { InvoiceListResponse, type CreateInvoiceBody } from "../shared/invoice.schema";
-import { api } from "../lib/api"; // reuse the project's existing client
+import { InvoiceListResponse, type CreateInvoiceBody } from "../invoice.schema";
+import { api } from "../../../lib/api"; // adapt to the project's existing client
 
 const keys = { all: ["invoices"] as const };
 
@@ -140,7 +140,7 @@ export const useInvoiceUi = create<InvoiceUi>((set) => ({
 ## 7. Component — `components/InvoiceList.tsx`
 
 ```tsx
-import type { Invoice } from "../shared/invoice.schema";
+import type { Invoice } from "../invoice.schema";
 
 type InvoiceListProps = { invoices: Invoice[] };
 export function InvoiceList({ invoices }: InvoiceListProps) {
@@ -170,4 +170,73 @@ export function InvoiceListContainer() {
 }
 ```
 
-Use the `write-tests` skill for colocated tests.
+## 8. Service test — `invoice.service.test.ts`
+
+```ts
+import { describe, expect, it, vi } from "vitest"; // adapt to the detected runner
+import type { InvoiceRepository } from "./invoice.repository";
+import { createInvoiceService, NotFoundError } from "./invoice.service";
+
+const invoice = {
+  id: "11111111-1111-4111-8111-111111111111",
+  customer: "Acme",
+  amountCents: 100,
+  status: "draft" as const,
+  createdAt: "2026-01-01T00:00:00.000Z",
+};
+
+function makeRepo(overrides: Partial<InvoiceRepository> = {}): InvoiceRepository {
+  return {
+    findById: vi.fn(),
+    list: vi.fn(),
+    insert: vi.fn(),
+    ...overrides,
+  };
+}
+
+describe("invoice service", () => {
+  it("returns an invoice when found", async () => {
+    const service = createInvoiceService(
+      makeRepo({ findById: vi.fn().mockResolvedValue(invoice) }),
+    );
+
+    await expect(service.get(invoice.id)).resolves.toEqual(invoice);
+  });
+
+  it("throws when an invoice is missing", async () => {
+    const service = createInvoiceService(
+      makeRepo({ findById: vi.fn().mockResolvedValue(null) }),
+    );
+
+    await expect(service.get("missing")).rejects.toBeInstanceOf(NotFoundError);
+  });
+});
+```
+
+## 9. Component test — `components/InvoiceList.test.tsx`
+
+```tsx
+import { render, screen } from "@testing-library/react";
+import { expect, it } from "vitest"; // adapt to the detected runner
+import { InvoiceList } from "./InvoiceList";
+
+it("renders an invoice row", () => {
+  render(
+    <InvoiceList
+      invoices={[
+        {
+          id: "11111111-1111-4111-8111-111111111111",
+          customer: "Acme",
+          amountCents: 100,
+          status: "draft",
+          createdAt: "2026-01-01T00:00:00.000Z",
+        },
+      ]}
+    />,
+  );
+
+  expect(screen.getByText("Acme")).toBeInTheDocument();
+});
+```
+
+Adapt both tests to the detected runner and the project's existing test setup.

@@ -3,6 +3,7 @@ paths:
   - "**/routes/**/*.ts"
   - "**/controllers/**/*.ts"
   - "**/*.route.ts"
+  - "**/*.routes.ts"
   - "**/*.controller.ts"
 ---
 

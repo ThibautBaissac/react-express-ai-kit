@@ -8,6 +8,11 @@ paths:
 
 # Shared API contracts
 
+Apply this rule only to shared API or domain contracts.
+It does not apply to persistence or ORM schemas, such as Drizzle table
+definitions. Those stay behind the repository boundary and follow the detected
+data tool's conventions.
+
 These files are the single source of truth for FE/BE data shapes.
 Both sides import them.
 Never redeclare the same shape on one side.

@@ -22,7 +22,7 @@ run_build
 
 Run steps in this order: typecheck, lint, tests, build.
 If one step fails, capture the signal and continue with independent later steps.
-Skip a step only when the detector reports the matching script or runner is missing.
+Treat a step as skipped when the detector reports that its script or local binary is missing.
 
 ## Report
 

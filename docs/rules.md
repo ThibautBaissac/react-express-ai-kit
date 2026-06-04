@@ -75,6 +75,7 @@ paths: ["src/server/routes/**/*.ts"]
 paths:
   - "**/routes/**/*.ts"
   - "**/*.route.ts"
+  - "**/*.routes.ts"
 ```
 
 This is why every rule in this repo uses `**/<role>/**` plus `**/*.<role>.ts` patterns — they identify the layer by naming convention, so the pack works across project structures.

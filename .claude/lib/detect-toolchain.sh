@@ -9,14 +9,30 @@
 #   bash   "<path>/detect-toolchain.sh"      # prints a one-line summary
 #   bash   "<path>/detect-toolchain.sh" json # prints machine-readable summary
 #
-# Detection starts at $TOOLCHAIN_ROOT (or $CLAUDE_PROJECT_DIR, or $PWD). Scripts run
+# Detection starts at $TOOLCHAIN_ROOT, or the active $PWD when it is inside
+# $CLAUDE_PROJECT_DIR, or $CLAUDE_PROJECT_DIR. Scripts run
 # from the nearest package.json, while package manager detection walks upward to find
 # the workspace lockfile/packageManager field — so it works from a package inside a
 # monorepo.
 
+# --- choose the active location without losing nested monorepo context ----------
+toolchain_start_dir() {
+  if [ -n "${TOOLCHAIN_ROOT:-}" ]; then
+    printf '%s\n' "$TOOLCHAIN_ROOT"
+  elif [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
+    case "$PWD/" in
+      "$CLAUDE_PROJECT_DIR/"*) printf '%s\n' "$PWD" ;;
+      *) printf '%s\n' "$CLAUDE_PROJECT_DIR" ;;
+    esac
+  else
+    printf '%s\n' "$PWD"
+  fi
+}
+
 # --- locate the project root (nearest ancestor with package.json) -------------
 detect_project_root() {
-  local dir="${1:-${TOOLCHAIN_ROOT:-${CLAUDE_PROJECT_DIR:-$PWD}}}"
+  local start="${1:-$(toolchain_start_dir)}"
+  local dir="$start"
   while [ "$dir" != "/" ] && [ -n "$dir" ]; do
     if [ -f "$dir/package.json" ]; then
       printf '%s\n' "$dir"
@@ -25,13 +41,14 @@ detect_project_root() {
     dir="$(dirname "$dir")"
   done
   # No package.json found: fall back to the starting directory.
-  printf '%s\n' "${1:-${TOOLCHAIN_ROOT:-${CLAUDE_PROJECT_DIR:-$PWD}}}"
+  printf '%s\n' "$start"
   return 1
 }
 
 # --- locate the workspace/config root used for lockfile + package manager -----
 detect_workspace_root() {
-  local dir="${1:-${TOOLCHAIN_ROOT:-${CLAUDE_PROJECT_DIR:-$PWD}}}"
+  local start="${1:-$(toolchain_start_dir)}"
+  local dir="$start"
   local package_root=""
   while [ "$dir" != "/" ] && [ -n "$dir" ]; do
     if [ -f "$dir/pnpm-lock.yaml" ] || [ -f "$dir/yarn.lock" ] \
@@ -47,7 +64,7 @@ detect_workspace_root() {
   if [ -n "$package_root" ]; then
     printf '%s\n' "$package_root"
   else
-    printf '%s\n' "${1:-${TOOLCHAIN_ROOT:-${CLAUDE_PROJECT_DIR:-$PWD}}}"
+    printf '%s\n' "$start"
     return 1
   fi
 }
@@ -100,8 +117,7 @@ detect_test_runner() {
   case "$pkg" in
     *'"jest"'*|*'ts-jest'*) echo "jest"; return 0 ;;
   esac
-  # Fall back to inspecting the test script text.
-  local script; script="$(_pkg_field "$root" scripts 2>/dev/null)"
+  # Fall back to inspecting package.json text.
   case "$pkg" in
     *vitest*) echo "vitest" ;;
     *jest*)   echo "jest" ;;
@@ -133,10 +149,32 @@ pm_run() {
 
 # has_script <name> — 0 if package.json defines that script.
 has_script() {
-  case "$(cat "$PROJECT_ROOT/package.json" 2>/dev/null)" in
-    *"\"$1\""*) return 0 ;;
-    *) return 1 ;;
-  esac
+  local name="$1"
+  [ -f "$PROJECT_ROOT/package.json" ] || return 1
+  if command -v node >/dev/null 2>&1 && node -e '' >/dev/null 2>&1; then
+    node -e '
+      try {
+        const scripts = require(process.argv[1]).scripts || {};
+        process.exit(Object.prototype.hasOwnProperty.call(scripts, process.argv[2]) ? 0 : 1);
+      } catch { process.exit(1); }
+    ' "$PROJECT_ROOT/package.json" "$name" 2>/dev/null
+  else
+    # Without a JSON parser, prefer "unknown" over mistaking a dependency for a script.
+    return 1
+  fi
+}
+
+# run_local_bin <name> [args...] — use an installed project/workspace CLI only.
+run_local_bin() {
+  local name="$1"; shift
+  if [ -x "$PROJECT_ROOT/node_modules/.bin/$name" ]; then
+    ( cd "$PROJECT_ROOT" && "$PROJECT_ROOT/node_modules/.bin/$name" "$@" )
+  elif [ -x "$WORKSPACE_ROOT/node_modules/.bin/$name" ]; then
+    ( cd "$PROJECT_ROOT" && "$WORKSPACE_ROOT/node_modules/.bin/$name" "$@" )
+  else
+    echo "detect-toolchain: no script or local '$name' binary found" >&2
+    return 2
+  fi
 }
 
 # run_tests [path...] — run the test runner, preferring a "test" script.
@@ -144,9 +182,9 @@ run_tests() {
   if has_script test; then
     pm_run test "$@"
   elif [ "$TEST_RUNNER" = "vitest" ]; then
-    ( cd "$PROJECT_ROOT" && $PM_EXEC vitest run "$@" )
+    run_local_bin vitest run "$@"
   elif [ "$TEST_RUNNER" = "jest" ]; then
-    ( cd "$PROJECT_ROOT" && $PM_EXEC jest "$@" )
+    run_local_bin jest "$@"
   else
     echo "detect-toolchain: no test script or known runner found" >&2
     return 1
@@ -160,7 +198,7 @@ run_typecheck() {
   elif has_script type-check; then
     pm_run type-check "$@"
   else
-    ( cd "$PROJECT_ROOT" && $PM_EXEC tsc --noEmit "$@" )
+    run_local_bin tsc --noEmit "$@"
   fi
 }
 
@@ -169,7 +207,7 @@ run_lint() {
   if has_script lint; then
     pm_run lint "$@"
   else
-    ( cd "$PROJECT_ROOT" && $PM_EXEC eslint "$@" )
+    run_local_bin eslint "$@"
   fi
 }
 
@@ -178,7 +216,7 @@ run_format() {
   if has_script format; then
     pm_run format "$@"
   else
-    ( cd "$PROJECT_ROOT" && $PM_EXEC prettier --write "$@" )
+    run_local_bin prettier --write "$@"
   fi
 }
 
