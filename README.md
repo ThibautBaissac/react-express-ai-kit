@@ -18,6 +18,25 @@ Two things it deliberately does **not** hardcode:
   schema/migration subagent adapts to whatever ORM your repo uses (Prisma, Drizzle,
   Mongoose, Knex, TypeORM, raw SQL, …).
 
+## The stack at a glance
+
+Each tool owns one lane, so there's a single obvious place for each kind of work:
+
+| Tool | What it does |
+| --- | --- |
+| **TypeScript** | Typed language across front and back end — catches mistakes as you write. |
+| **React** | Builds the user interface (the screens). |
+| **Vite** | Dev server and bundler for the frontend. |
+| **React Router** | Maps each URL to the screen it should show (Data Mode — client-side). |
+| **TanStack Query** | Fetches and caches server data on the frontend (owns server state). |
+| **Zustand** | Holds small UI-only state (e.g. is this panel open). |
+| **Express** | The backend HTTP server that answers API requests. |
+| **zod** | Validates data at every boundary and is the shared FE/BE contract. |
+
+The flow is one-way — `component → hook → store/query → API` on the frontend,
+`route → service → repository → data` on the backend — and **server data lives in exactly one
+place** (TanStack Query), never mirrored into Zustand.
+
 ## Install
 
 Copy the canonical `.claude/` directory into your project root:
