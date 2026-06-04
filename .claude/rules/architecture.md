@@ -1,20 +1,15 @@
 # Architecture baseline
 
-Always-on principles for React + Express + TypeScript.
-Path-scoped rules add layer-specific details.
+Always-on React + Express + TypeScript principles. Path-scoped rules add layer details.
 
 ## Organize by feature, over a shared layer
 
-This is a **hybrid** layout: feature slices for domain code, a `shared/` layer
-for cross-cutting code.
+Use a **hybrid** layout: feature slices own domain code; `shared/` owns
+cross-cutting infrastructure.
 
-A **feature** owns its domain API, business logic, data access, UI, hooks,
-state, contracts, and tests. Domain code always lives in a feature.
-
-The **`shared/` layer** holds cross-cutting infrastructure that several features
-build on — the db/http clients, config, logger, environment-neutral zod
-contracts, and generic UI primitives. It is a first-class home from the start,
-not a reluctant afterthought.
+A feature owns its API, business logic, data access, UI, hooks, state,
+contracts, and tests. `shared/` holds db/http clients, config, logging,
+environment-neutral cross-feature contracts, and generic UI primitives.
 
 ```
 features/invoice/
@@ -46,9 +41,8 @@ shared/
 - Domain logic or feature components with domain props.
 - Feature code moved only to avoid duplication.
 
-If you cannot name the code without naming a feature, it does not belong in
-`shared/`. Cross-cutting infra is allowed up front; domain code remains
-feature-owned.
+If naming the code requires naming a feature, keep it in that feature.
+Cross-cutting infra may enter `shared/` on first use.
 
 ## Keep dependencies one-way
 
@@ -58,10 +52,8 @@ Frontend server state: component → hook → Query client → (API)
 Frontend UI state:     component → hook/store
 ```
 
-A layer depends only on the layer below it, through a typed interface when possible.
-Do not skip or reverse layers.
-Do not put DB calls in routes.
-Do not pass `req` or `res` into services.
+A layer depends only on the layer below, through typed interfaces where possible.
+Never skip or reverse layers. No DB calls in routes. No `req` or `res` in services.
 
 Dependencies across the hybrid layout flow one way too:
 
@@ -71,10 +63,9 @@ shared  → feature       (never — no back-dependency)
 feature → feature       (avoid direct dependencies)
 ```
 
-A feature may import from `shared/`; `shared/` must never import from a feature,
-and features should not import each other. If domain code appears to require a
-feature-to-feature dependency, reconsider the feature boundary or coordinate
-the features from a composition root; do not move domain code into `shared/`.
+Features may import `shared/`; `shared/` never imports features. Avoid direct
+feature imports. For cross-feature workflows, reconsider boundaries or
+coordinate from a composition root. Do not move domain code into `shared/`.
 
 ## Use the five disciplines
 
@@ -86,18 +77,14 @@ the features from a composition root; do not move domain code into `shared/`.
 
 ## Avoid premature abstraction
 
-Prefer duplication over the wrong abstraction.
-Extract a *domain* helper or component only after the third real use makes the right shape clear.
-Premature abstraction adds coupling that costs more than the duplication it removes.
-
-This applies to domain code, not to cross-cutting infrastructure. The db client,
-http client, logger, and config in `shared/` are foundational by nature — stand
-them up when first needed rather than waiting for a third use.
+Prefer duplication over the wrong abstraction. Extract a *domain* helper or
+component after its third real use reveals the right shape. Cross-cutting
+infrastructure such as db/http clients, logging, and config may start on first use.
 
 ## Prefer composition
 
-Compose small functions and components.
-Avoid deep prop drilling, inheritance trees, and config objects with many optional flags.
+Compose small functions and components. Avoid deep prop drilling, inheritance
+trees, and flag-heavy config objects.
 
 ## Checklist
 

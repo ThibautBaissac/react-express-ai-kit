@@ -9,28 +9,27 @@ model: sonnet
 
 # Style a component with Tailwind + Headless UI
 
-Style the UI for `$target` with utility classes, and reach for Headless UI whenever the element is interactive and needs accessibility.
-Styling lives in presentational components — never add fetching or business logic here (see the `frontend-components` rule).
+Style `$target` with utilities. Use Headless UI for accessible interactive
+elements. Keep fetching and business logic out of presentational components.
 
 ## Step 1 — Ensure Tailwind is set up
 
-Check for an existing Tailwind setup before touching config: look for `@tailwindcss/vite` in `package.json`, `tailwindcss()` in `vite.config.*`, and `@import "tailwindcss"` in a CSS entry.
-If any piece is missing, follow `references/styling-patterns.md` section "Tailwind v4 setup" (Vite plugin, CSS-first `@theme`, no `tailwind.config.js`).
-Install Headless UI (`@headlessui/react`) only when the task needs an interactive primitive.
+Check for `@tailwindcss/vite`, `tailwindcss()` in `vite.config.*`, and
+`@import "tailwindcss"` in a CSS entry. If incomplete, apply the reference
+section "Tailwind v4 setup". Install `@headlessui/react` only when needed.
 
 ## Step 2 — Style with utilities
 
-Read `references/styling-patterns.md` and apply it.
+Apply `references/styling-patterns.md`.
 - Use utility classes directly on semantic markup; prefer design tokens over arbitrary values like `w-[317px]`.
 - Compose conditional classes with the project's existing `clsx`/`cn` helper, not string concatenation.
 - Keep responsive/state variants inline (`md:`, `hover:`, `dark:`); do not hand-write CSS the utilities already cover.
 
 ## Step 3 — Use Headless UI for interactive primitives
 
-Consult the component inventory in `references/styling-patterns.md` before hand-rolling an interactive widget or form control.
-When Headless UI provides the needed behavior, use it instead of rebuilding it.
-It ships the keyboard, focus, and ARIA behavior; you supply the Tailwind classes.
-Style element states with the data-attribute API (`data-[open]`, `data-[selected]`, `data-[focus]`) and animate with `<Transition>` / the `transition` prop.
+Check the reference inventory before building an interactive widget. Use
+Headless UI when it provides the behavior; it owns keyboard, focus, and ARIA.
+Style with data attributes and `<Transition>` or `transition`.
 
 ## Step 4 — Keep it presentational and DRY-by-earn
 
@@ -46,7 +45,7 @@ run_typecheck
 run_build
 ```
 
-`run_build` confirms Tailwind compiles the classes you used.
+`run_build` confirms Tailwind compiles the used classes.
 
 ## Checklist
 

@@ -1,10 +1,12 @@
 # Tailwind v4 + Headless UI patterns
 
-Reference for the `style-component` skill. Versions current as of June 2026: Tailwind CSS v4.x, `@headlessui/react` v2.2.x.
+For `style-component`. June 2026 versions: Tailwind CSS v4.x,
+`@headlessui/react` v2.2.x.
 
 ## Tailwind v4 setup (Vite)
 
-v4 is CSS-first: no `postcss.config.js`, no `tailwind.config.js`, automatic content detection.
+v4 is CSS-first with automatic content detection. No `postcss.config.js` or
+`tailwind.config.js`.
 
 1. Install `tailwindcss` and `@tailwindcss/vite` as dev dependencies with the project's package manager (`npm i -D …`, `pnpm add -D …`, or `yarn add -D …` — match the lockfile).
 
@@ -26,11 +28,12 @@ export default defineConfig({
 @import "tailwindcss";
 ```
 
-That's the whole setup. Do **not** add `@tailwind base/components/utilities` (that's v3) or scaffold a `tailwind.config.js` — only edit one if the repo already has it.
+Do **not** add v3 `@tailwind base/components/utilities` or create
+`tailwind.config.js`; edit existing config only.
 
 ## Customize with `@theme`, not JS config
 
-Design tokens live in CSS and become utilities automatically.
+CSS design tokens become utilities automatically.
 
 ```css
 @import "tailwindcss";
@@ -62,7 +65,9 @@ import clsx from "clsx";
 
 ## Headless UI primitives
 
-Install `@headlessui/react` only when needed. Before hand-rolling an interactive widget or form control, check whether one of these documented component families provides the behavior. You own the Tailwind classes; Headless UI owns the keyboard, focus, and ARIA behavior.
+Install `@headlessui/react` only when needed. Check these families before
+hand-rolling widgets. Tailwind owns styling; Headless UI owns keyboard, focus,
+and ARIA behavior.
 
 | Category | Need | Component family |
 | --- | --- | --- |
@@ -83,11 +88,12 @@ Install `@headlessui/react` only when needed. Before hand-rolling an interactive
 | Form | Toggle | `Switch` |
 | Form | Multiline text input | `Textarea` |
 
-Consult the relevant Headless UI documentation for the family's nested components and API, such as `MenuButton`/`MenuItems`/`MenuItem` or `DialogPanel`/`DialogTitle`.
+Consult Headless UI docs for nested components and APIs such as
+`MenuButton`/`MenuItems`/`MenuItem` or `DialogPanel`/`DialogTitle`.
 
 ### Style states with the data-attribute API (v2.1+)
 
-Render props still work, but the data-attribute API keeps markup flat and styling in Tailwind:
+Prefer the data-attribute API to keep markup flat and styling in Tailwind:
 
 ```tsx
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
@@ -123,7 +129,8 @@ Common state attributes: `data-[open]`, `data-[closed]`, `data-[selected]`, `dat
 
 ### Transitions
 
-Add the `transition` prop (or wrap in `<Transition>`) and express enter/leave with `data-[closed]:` / `data-[enter]:` / `data-[leave]:` utilities — no separate transition-class props.
+Use `transition` or `<Transition>`. Express enter/leave with `data-[closed]:`,
+`data-[enter]:`, and `data-[leave]:`; no separate transition-class props.
 
 ## Accessibility & layering reminders
 

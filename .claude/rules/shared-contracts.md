@@ -7,23 +7,18 @@ paths:
 
 # FE/BE API contracts
 
-This rule governs zod API or domain contracts, whether feature-owned or
-cross-feature. The broader `shared/` layer — infra clients, config, UI
-primitives — is governed by `architecture.md`.
+This rule covers feature-owned and cross-feature zod API/domain contracts.
+`architecture.md` governs other `shared/` code.
 
-The path globs can also match persistence or ORM schemas, such as Drizzle table
-definitions. Classify the file before applying this rule; persistence schemas
-stay behind the repository boundary and follow the detected data tool's
-conventions.
+These globs may match persistence schemas. Classify the file first; persistence
+schemas stay behind repositories and follow the detected data tool.
 
-These files are the single source of truth for FE/BE data shapes.
-Both sides import them.
-Never redeclare the same shape on one side.
+Contracts are the single source of truth for FE/BE shapes. Both sides import
+them; neither redeclares them.
 
 ## Define schema first
 
-Define the zod schema, then infer the TypeScript type.
-Do not hand-write a parallel `interface`.
+Define the zod schema, then infer the TypeScript type. No parallel `interface`.
 
 ```ts
 // ✅ one source of truth
@@ -42,8 +37,7 @@ export interface Invoice { id: string; amountCents: number; status: string; }
 
 ## Derive variants
 
-Derive request and response shapes from the base schema.
-Do not repeat fields by hand.
+Derive request and response shapes from the base schema. Do not repeat fields.
 
 ```ts
 export const CreateInvoiceBody = InvoiceSchema.omit({ id: true, status: true });

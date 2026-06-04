@@ -7,13 +7,11 @@ paths:
 
 # Global state — UI state only
 
-Use stores for global client/UI state such as theme, sidebar, wizard step, and selections.
-Keep server data in TanStack Query.
-Do not mirror server data in Zustand.
+Use stores for global client/UI state such as theme, sidebar, wizard step, and
+selections. TanStack Query owns server data; never mirror it in Zustand.
 
-A store lives where its concern lives: a feature's UI store stays in the feature
-(`features/<feature>/store/`); a genuinely cross-cutting store (theme, session,
-layout) belongs in `shared/`.
+Keep feature UI stores in `features/<feature>/store/`. Put genuinely
+cross-cutting stores such as theme, session, or layout in `shared/`.
 
 ## Do not duplicate server state
 
@@ -37,16 +35,14 @@ export const useInvoiceUi = create<UiState>((set) => ({
 
 ## Keep stores small
 
-Use one small store or slice per concern.
-Do not build one global megastore.
-Subscribe with selectors so components re-render only for the state they read.
+Use one small store or slice per concern, not a global megastore. Subscribe with
+selectors so components re-render only for state they read.
 
 ```ts
 const selectedId = useInvoiceUi((s) => s.selectedInvoiceId); // ✅ narrow selector
 ```
 
-Keep actions next to the state they mutate.
-Keep actions pure and minimal.
+Keep actions beside their state, pure and minimal.
 
 ## Checklist
 

@@ -1,7 +1,7 @@
 # Test patterns
 
-Vitest and Jest both support `describe`, `it`, and `expect`.
-Match the project's existing import style and mock factory.
+Vitest and Jest support `describe`, `it`, and `expect`. Match existing imports
+and mock factories.
 
 ```ts
 // Vitest
@@ -10,7 +10,7 @@ import { describe, it, expect, vi } from "vitest";
 import { describe, it, expect, jest } from "@jest/globals";
 ```
 
-Define a local `mockFn` helper for the detected runner.
+Define local `mockFn` for the detected runner.
 
 ```ts
 // Vitest
@@ -81,9 +81,9 @@ it("shows invoices once loaded", async () => {
 
 ## Mocking HTTP
 
-Prefer MSW over stubbing `fetch`.
-If the project uses MSW, define handlers in a shared `server` and call `server.use(...)` per test for error cases.
-Otherwise mock the project's API client module, not global `fetch`.
+Prefer MSW over `fetch` stubs. With MSW, define handlers in a shared `server`
+and call `server.use(...)` per error case. Otherwise mock the API client module,
+not global `fetch`.
 
 ## Do / don't
 

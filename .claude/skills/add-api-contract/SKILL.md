@@ -9,34 +9,31 @@ model: sonnet
 
 # Add or extend an API contract
 
-Define the shape once in zod, and import it from both sides.
-Contract: `$contract`.
+Define `$contract` once in zod; import it from both sides.
 
 ## Step 1 — Locate the owning feature
 
-Find the owning feature and its existing contract location, using
-`references/zod-patterns.md` section "Where it lives". Keep the contract in the
-feature by default. Use an existing shared package or contracts directory only
-when the contract is genuinely cross-feature.
+Find the owning feature and existing contract location. Follow
+`references/zod-patterns.md` "Where it lives". Default to the feature; use a
+shared contract location only for genuinely cross-feature shapes.
 
 ## Step 2 — Define schema first
 
-Read `references/zod-patterns.md` and apply it.
+Apply `references/zod-patterns.md`.
 - Write a base `z.object` schema with real constraints such as uuid, int, min/max, and enum.
 - Export types with `z.infer`; do not write a parallel interface.
 - Derive request and response variants with `.pick`, `.omit`, `.partial`, or `.extend`.
 
 ## Step 3 — Wire the backend
 
-Parse `req.body`, `req.params`, and `req.query` at the route boundary with the contract schema.
-Follow any existing validation middleware pattern; otherwise parse inline and forward failures with `next(err)`.
-Keep handlers thin: parse input, call the service, shape the response.
+Parse `req.body`, `req.params`, and `req.query` at the route boundary. Follow
+existing validation middleware; otherwise parse inline and forward failures
+with `next(err)`. Handlers only parse, call the service, and shape responses.
 
 ## Step 4 — Wire the frontend
 
-Type request data from the derived schema type.
-Parse API responses with the response schema before UI code trusts them.
-Reuse the project's existing API client.
+Type requests from derived schema types. Parse responses before UI code trusts
+them. Reuse the existing API client.
 
 ## Step 5 — Verify
 

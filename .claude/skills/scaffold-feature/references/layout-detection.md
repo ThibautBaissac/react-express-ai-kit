@@ -1,8 +1,6 @@
 # Detecting the project layout
 
-Match the repo's real structure.
-Inspect before generating.
-Do not impose a new layout.
+Inspect first. Match the repo; never impose a new layout.
 
 ## Signals to read
 
@@ -21,19 +19,16 @@ Do not impose a new layout.
 
 ## Placement decision
 
-Domain code (the route/service/repository/components/hooks for this feature)
-goes in:
+Place feature domain code (route/service/repository/components/hooks) in:
 
 1. An existing feature folder.
 2. A new feature folder beside the existing ones in a hybrid layout.
 3. Split server/client dirs.
 4. Flat layered dirs.
 
-Keep domain code out of `shared/`. Only put a file in the shared layer if it is
-genuinely cross-cutting infra (a client, config, logger, or a generic
-domain-free primitive) — see `architecture.md`. A normal feature scaffold does
-not place its contract in `shared/` unless the contract is genuinely
-cross-feature.
+Keep domain code out of `shared/`. It accepts only cross-cutting infra such as
+clients, config, logging, and domain-free primitives. Keep contracts in their
+feature unless genuinely cross-feature.
 When conventions conflict, follow the nearest existing example.
 
 ## Where the contract schema goes

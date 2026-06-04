@@ -1,7 +1,6 @@
 # React Router v7 (Data Mode) — patterns
 
-All imports come from the single `react-router` package.
-There is no `react-router-dom` in v7.
+Import only from `react-router`; v7 has no `react-router-dom`.
 
 ## Router setup
 
@@ -51,7 +50,7 @@ export function AppLayout() {
 
 ## Lazy routes
 
-Each feature exports route objects; heavy components and their loaders load on navigation via `lazy`.
+Each feature exports route objects. Load heavy components and loaders via `lazy`.
 
 ```tsx
 // features/invoice/invoice.routes.tsx
@@ -82,9 +81,8 @@ export const invoiceRoutes: RouteObject[] = [
 
 ## TanStack Query integration
 
-Server state stays owned by TanStack Query (per the frontend-hooks rule).
-The loader's job is to *warm the cache*, not to become a second source of truth.
-The component reads through the same `useQuery` hook it would use without routing — so it works on direct nav and on client nav.
+TanStack Query owns server state. Loaders only *warm the cache*. Components read
+the same `useQuery` hook on direct and client navigation.
 
 ```tsx
 // features/invoice/components/InvoiceDetail.tsx
@@ -120,8 +118,8 @@ export const invoiceQuery = (id: string) =>
   });
 ```
 
-Mutations: prefer the existing TanStack Query mutation hook (invalidates keys in `onSuccess`).
-Use a route `action` only for non-Query flows or progressive-enhancement `<Form>` submissions:
+Prefer existing Query mutation hooks and invalidate keys in `onSuccess`. Use a
+route `action` only for non-Query flows or progressive-enhancement `<Form>`:
 
 ```tsx
 import { redirect } from "react-router";
@@ -136,8 +134,8 @@ export async function createInvoiceAction({ request }: { request: Request }) {
 
 ## Typed params
 
-Parse, don't validate: route params and search params are untrusted strings.
-Parse them with zod into typed values at the boundary, reusing the feature's contract schema where it fits.
+Route and search params are untrusted strings. Parse them with zod at the
+boundary; reuse feature contracts where they fit.
 
 ```tsx
 // invoice.schema.ts
@@ -183,8 +181,8 @@ export function InvoiceError() {
 
 ## Why Data Mode (not Framework / Declarative)
 
-- **Framework Mode** is the successor to Remix: file-system routes, server rendering, its own Vite plugin.
-  It assumes it owns the server — which Express already does here.
-  Adopting it would mean replacing the backend, not integrating with it.
-- **Declarative Mode** (`<BrowserRouter>`) gives only `<Link>`/`useNavigate`/`useParams` — no loaders, pending states, or route error boundaries.
-- **Data Mode** is Vite-SPA friendly, talks to any external API, and adds exactly the orchestration (loaders, actions, `useNavigation`, error boundaries, fetchers) this stack benefits from.
+- **Framework Mode** owns routing, SSR, Vite integration, and the server. It
+  would replace Express.
+- **Declarative Mode** (`<BrowserRouter>`) lacks loaders, pending states, and
+  route error boundaries.
+- **Data Mode** fits a Vite SPA with an external API and adds route orchestration.

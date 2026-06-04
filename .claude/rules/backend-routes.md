@@ -9,9 +9,8 @@ paths:
 
 # Express routes — thin handlers
 
-A handler does three things: parse input, call a service, shape the HTTP response.
-No business logic belongs here.
-No data access belongs here.
+A handler parses input, calls a service, and shapes the response. No business
+logic or data access.
 
 ## Parse at the boundary
 

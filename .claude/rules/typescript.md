@@ -5,14 +5,12 @@ paths:
 
 # TypeScript conventions
 
-These rules apply to every `.ts` and `.tsx` file.
-Assume `strict: true`.
+Applies to every `.ts` and `.tsx` file. Assume `strict: true`.
 
 ## Avoid unsafe escapes
 
-`any` disables type checking and spreads silently.
-Use `unknown` at boundaries, then narrow or parse.
-Define real types for known data.
+`any` disables type checking and spreads silently. Use `unknown` at boundaries,
+then narrow or parse. Define real types for known data.
 
 ```ts
 // ❌ defeats the type system
@@ -25,13 +23,11 @@ function handle(payload: unknown) {
 }
 ```
 
-Avoid casts except at unavoidable boundaries.
-Never use `as any` or `as unknown as T`.
+Avoid casts except at unavoidable boundaries. Never use `as any` or `as unknown as T`.
 
 ## Infer locals
 
-Let TypeScript infer locals and simple return types.
-Annotate exported function signatures and public contracts.
+Infer locals and simple return types. Annotate exported signatures and public contracts.
 
 ```ts
 // ❌ noisy and drift-prone
@@ -42,8 +38,7 @@ const items = data.map((d) => ({ id: d.id }));
 
 ## Model states with unions
 
-Use discriminated unions so illegal states cannot compile.
-Avoid optional flags that must agree.
+Use discriminated unions so illegal states cannot compile. Avoid coupled optional flags.
 
 ```ts
 // ❌ which fields are valid when?

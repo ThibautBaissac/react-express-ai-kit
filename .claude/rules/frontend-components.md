@@ -5,9 +5,7 @@ paths:
 
 # React components — presentational and composable
 
-Components render UI from props.
-Data fetching and business logic live in hooks or stores.
-Keep component bodies focused on rendering.
+Components render UI from props. Hooks or stores own data loading and business logic.
 
 ## Use function components
 
@@ -48,14 +46,11 @@ function InvoiceListContainer() {
 
 ## Compose before configuring
 
-Build small components with props, children, and slots.
-Avoid one component with many boolean flags.
+Build small components with props, children, and slots. Avoid flag-heavy components.
 
-Generic, domain-free UI primitives (`Button`, `Input`, `Dialog`) live in
-`shared/ui` from the start. Promote a *domain* component out of its feature only
-after a third real use proves the shape — and if it still carries domain props
-it stays in the feature; two features needing it is the signal to extract a
-domain-free primitive, not to copy a feature component.
+Generic, domain-free primitives (`Button`, `Input`, `Dialog`) start in
+`shared/ui`. Extract a domain component after its third real use proves the
+shape. If it still has domain props, keep it in the feature.
 
 ## Rules
 

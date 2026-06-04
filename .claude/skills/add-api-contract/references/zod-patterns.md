@@ -2,15 +2,14 @@
 
 ## Where it lives
 
-FE/BE contract schemas must work in both the browser bundle and Node.
-Keep a contract in its owning feature by default. Use the monorepo shared package
-or an environment-neutral directory such as `src/shared` or `src/contracts`
-only when the contract is genuinely cross-feature.
-Do not import Express, React, DB clients, or runtime-specific modules here.
+FE/BE contracts must run in browsers and Node. Default to the owning feature.
+Use a shared package or environment-neutral directory only for genuinely
+cross-feature contracts. Never import Express, React, DB clients, or
+runtime-specific modules.
 
 ## Parse, don't validate
 
-Convert `unknown` into typed data at the boundary, then trust the type.
+Parse `unknown` into typed data at the boundary, then trust the type.
 
 ```ts
 // ✅ returns a typed value or throws
@@ -44,7 +43,7 @@ export const UserListResponse = z.object({ items: z.array(UserSchema) });
 
 ## Branded types for identifiers
 
-Use branded ids only when plain strings have caused real mix-ups.
+Use branded ids only after plain strings cause real mix-ups.
 
 ```ts
 export const UserId = z.string().uuid().brand<"UserId">();
@@ -53,7 +52,7 @@ export type UserId = z.infer<typeof UserId>; // not assignable from a plain stri
 
 ## Coercion for query params
 
-Query params arrive as strings, so coerce them at the boundary.
+Coerce string query params at the boundary.
 
 ```ts
 export const Pagination = z.object({
@@ -64,7 +63,7 @@ export const Pagination = z.object({
 
 ## Reusable Express validation middleware
 
-Use middleware only when the project already wants that pattern.
+Use middleware only when the project already follows this pattern.
 
 ```ts
 import type { RequestHandler } from "express";

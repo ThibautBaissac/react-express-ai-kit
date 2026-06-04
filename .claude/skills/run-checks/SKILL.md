@@ -8,7 +8,7 @@ model: inherit
 
 # Run the quality gate
 
-Run every step through the shared detector; do not hardcode the package manager or runner.
+Run every step through the detector. Never hardcode the package manager or runner.
 
 ```bash
 source "${CLAUDE_PROJECT_DIR}/.claude/lib/detect-toolchain.sh"
@@ -20,9 +20,8 @@ run_tests
 run_build
 ```
 
-Run steps in this order: typecheck, lint, tests, build.
-If one step fails, capture the signal and continue with independent later steps.
-Treat a step as skipped when the detector reports that its script or local binary is missing.
+Order: typecheck, lint, tests, build. After a failure, capture the signal and
+continue independent steps. Mark missing scripts or binaries as skipped.
 
 ## Report
 
@@ -31,7 +30,7 @@ Treat a step as skipped when the detector reports that its script or local binar
 - Group related failures, and do not paste full logs.
 - If everything passes, say so in one line.
 
-Offer to fix failures without making unrelated changes.
+Fix requested failures without unrelated changes.
 
 ## Checklist
 

@@ -9,9 +9,7 @@ model: sonnet
 
 # Scaffold a vertical-slice feature
 
-Generate one cohesive feature slice that matches the project's existing structure.
-Feature: `$feature`.
-Mode: `$mode` or `full`.
+Generate `$feature` as one cohesive slice matching the repo. Mode: `$mode` or `full`.
 
 ## Step 1 — Detect toolchain and layout
 
@@ -19,18 +17,16 @@ Mode: `$mode` or `full`.
 bash "${CLAUDE_PROJECT_DIR}/.claude/lib/detect-toolchain.sh"
 ```
 
-Inspect the repo before creating files.
-Read `references/layout-detection.md` and follow it.
-Match existing conventions for monorepos, split server/client dirs, feature folders, naming, exports, router registration, and API clients.
+Inspect before creating files. Apply `references/layout-detection.md`. Match
+existing layout, naming, exports, router registration, and API clients.
 
 ## Step 2 — Confirm the plan
 
-State the files you will create and where.
-If fields are missing, ask once or infer the smallest useful shape.
+State files and locations. If fields are missing, ask once or infer the smallest useful shape.
 
 ## Step 3 — Generate the slice
 
-Read `references/slice-templates.md` and adapt the templates to the detected layout.
+Adapt `references/slice-templates.md` to the detected layout.
 
 1. **Contract** — Create `*.schema.ts` with a zod schema, `z.infer` types, and derived request/response shapes. Keep it in the feature; place it in the shared contracts dir only if the shape is genuinely cross-feature.
 2. **Backend** — For `full` or `api`, create `*.repository.ts`, `*.service.ts`, and `*.routes.ts`, then register the router where existing routers mount.
@@ -45,7 +41,7 @@ run_typecheck
 run_tests <new-test-path>
 ```
 
-Report created files, verification results, and required follow-ups such as filling the repository implementation for the detected data layer.
+Report created files, verification, and required follow-ups.
 
 ## Guardrails
 

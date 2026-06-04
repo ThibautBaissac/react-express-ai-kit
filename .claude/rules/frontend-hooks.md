@@ -6,13 +6,12 @@ paths:
 
 # Custom hooks — one responsibility
 
-Hooks encapsulate stateful logic so components stay presentational.
-Each hook should do one job.
+Hooks encapsulate one stateful concern so components stay presentational.
 
 ## Use TanStack Query for server state
 
-Fetch, cache, and mutate server data with Query.
-Do not hand-roll server state with `useEffect` and `useState`.
+Use Query to fetch, cache, and mutate server data. Do not hand-roll it with
+`useEffect` and `useState`.
 
 ```ts
 // ✅ server state via Query, parsed at the edge
@@ -35,8 +34,8 @@ export function useInvoices() {
 
 ## Invalidate after mutations
 
-Mutations invalidate affected query keys.
-Do not manually mirror server cache state unless the project already uses that pattern for optimistic updates.
+Invalidate affected query keys after mutations. Mirror cache state only when
+following an existing optimistic-update pattern.
 
 ```ts
 export function useCreateInvoice() {

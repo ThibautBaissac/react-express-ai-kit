@@ -9,8 +9,7 @@ model: sonnet
 
 # Write tests to convention
 
-Target: `$target`.
-Put tests next to the code under test.
+Test `$target`. Colocate tests.
 
 ## Step 1 — Detect runner and style
 
@@ -18,9 +17,8 @@ Put tests next to the code under test.
 bash "${CLAUDE_PROJECT_DIR}/.claude/lib/detect-toolchain.sh"
 ```
 
-Open nearby tests before writing new ones.
-Match the project's import style, setup files, mock helpers, and naming.
-Read `references/test-patterns.md` for canonical patterns.
+Open nearby tests first. Match imports, setup, mocks, naming, and
+`references/test-patterns.md`.
 
 ## Step 2 — Pick the test type
 
@@ -32,9 +30,8 @@ Read `references/test-patterns.md` for canonical patterns.
 
 ## Step 3 — Write behavior tests
 
-Use Arrange–Act–Assert.
-Assert observable outcomes, not private internals.
-Cover the happy path plus meaningful error or edge cases.
+Use Arrange-Act-Assert. Test observable outcomes, including meaningful error or
+edge cases, not private internals.
 
 ## Step 4 — Run new tests
 
@@ -43,8 +40,7 @@ source "${CLAUDE_PROJECT_DIR}/.claude/lib/detect-toolchain.sh"
 run_tests <new-test-path>
 ```
 
-Iterate until the new tests pass.
-Report covered behaviors, not a coverage percentage.
+Iterate until tests pass. Report covered behaviors, not a coverage percentage.
 
 ## Checklist
 

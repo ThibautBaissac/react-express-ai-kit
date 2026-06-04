@@ -7,9 +7,8 @@ paths:
 
 # Repositories — data-access boundary
 
-The repository is the only layer that talks to the data store.
-Expose a small interface in domain terms.
-Hide the ORM or driver completely.
+Only repositories access the data store. Expose small domain interfaces; hide
+the ORM or driver.
 
 ## Define domain interfaces
 
@@ -22,8 +21,7 @@ export interface InvoiceRepository {
 }
 ```
 
-The concrete implementation lives behind this interface.
-Use the project's detected data tool, but keep it out of the interface.
+Keep the detected data tool inside the concrete implementation.
 
 ## Return domain types
 
@@ -44,9 +42,8 @@ async findById(id: string) { return db.invoice.findUnique({ where: { id } }); }
 
 ## Keep business rules out
 
-Repositories fetch and persist.
-Services make decisions such as whether an invoice can be sent.
-Keep repository methods thin and intent-named.
+Repositories fetch and persist. Services make business decisions. Keep methods
+thin and intent-named.
 
 ## Checklist
 

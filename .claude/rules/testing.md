@@ -5,13 +5,11 @@ paths:
 
 # Testing conventions
 
-Vitest and Jest both expose `describe`, `it`, and `expect`.
-Put tests next to the code they cover.
+Vitest and Jest expose `describe`, `it`, and `expect`. Colocate tests.
 
 ## Test behavior
 
-Assert observable outcomes.
-Do not assert private internals.
+Assert observable outcomes, not private internals.
 
 ```ts
 // ❌ couples the test to internal structure
@@ -22,13 +20,11 @@ expect(await service.getInvoice("id")).toEqual(invoice);
 
 ## Use Arrange–Act–Assert
 
-Keep setup, action, and assertion visible.
-Test one logical behavior per test.
+Keep setup, action, and assertion visible. Test one logical behavior per test.
 
 ## Mock repository interfaces
 
-Service tests use a fake or mock repository interface.
-Do not use a real DB in service unit tests.
+Service unit tests mock repository interfaces; they never use a real DB.
 
 ```ts
 const mockFn = vi.fn; // or jest.fn in a Jest project
@@ -38,8 +34,8 @@ const service = createInvoiceService(repo);
 
 ## Test components like users
 
-Use React Testing Library queries by role, label, or text.
-Avoid test IDs unless no user-facing query fits.
+Use React Testing Library queries by role, label, or text. Use test IDs only
+when no user-facing query fits.
 
 ```tsx
 // ✅
