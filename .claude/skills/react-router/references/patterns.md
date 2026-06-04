@@ -137,7 +137,7 @@ export async function createInvoiceAction({ request }: { request: Request }) {
 ## Typed params
 
 Parse, don't validate: route params and search params are untrusted strings.
-Parse them with zod into typed values at the boundary, reusing the feature's shared schema where it fits.
+Parse them with zod into typed values at the boundary, reusing the feature's contract schema where it fits.
 
 ```tsx
 // invoice.schema.ts

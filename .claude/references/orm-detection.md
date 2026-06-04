@@ -28,7 +28,7 @@ Detect; do not assume.
 
 ## Principles
 
-- Keep persistence shapes consistent with shared zod domain types.
+- Keep persistence shapes consistent with their owning zod domain types.
 - Let repositories map persistence rows to domain types.
 - Prefer additive, reversible changes.
 - Flag and confirm destructive changes.

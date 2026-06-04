@@ -31,12 +31,13 @@ goes in:
 
 Keep domain code out of `shared/`. Only put a file in the shared layer if it is
 genuinely cross-cutting infra (a client, config, logger, or a generic
-domain-free primitive) — see `shared-layer.md`. A normal feature scaffold rarely
-needs to touch `shared/` beyond placing its contract.
+domain-free primitive) — see `architecture.md`. A normal feature scaffold does
+not place its contract in `shared/` unless the contract is genuinely
+cross-feature.
 When conventions conflict, follow the nearest existing example.
 
-## Where the shared schema goes
+## Where the contract schema goes
 
-- Monorepo: use the shared package both sides already import.
-- Single repo: use an environment-neutral directory importable by FE and BE, such as `src/shared` or `src/contracts`.
-- If no shared location exists, create `src/shared/` and note it in the summary.
+- Keep the contract in its owning feature when both sides can import it there.
+- Use an existing shared package or environment-neutral contracts directory only
+  when the contract is genuinely cross-feature.

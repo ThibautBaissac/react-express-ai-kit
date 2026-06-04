@@ -33,10 +33,10 @@ Judge each change in its layer context.
 - Flag DB access, business logic, or `req`/`res` leakage outside routes.
 - Services depend on repository interfaces, not concrete ORMs.
 - Repositories return domain types, map rows, and avoid business rules.
-- Feature/shared boundary: flag domain logic placed in `shared/`, any import of a feature from `shared/` (back-dependency), and feature-to-feature imports that should go through `shared/`.
+- Feature/shared boundary: flag domain logic placed in `shared/`, any import of a feature from `shared/` (back-dependency), and direct feature-to-feature imports that indicate unclear feature boundaries or missing composition-root coordination.
 
 2. **Typed contracts and FE/BE drift**
-- Boundary shapes come from shared zod schemas.
+- FE/BE boundary shapes come from the same zod contract schema.
 - Types use `z.infer`.
 - Flag duplicate interfaces and drifted FE/BE shapes.
 - Boundaries parse `unknown` with `.parse` or `.safeParse`.

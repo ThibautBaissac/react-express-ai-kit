@@ -15,12 +15,13 @@ LIB="${CLAUDE_PROJECT_DIR:-$PWD}/.claude/lib/detect-toolchain.sh"
 . "$LIB"
 
 CONTEXT="Toolchain (auto-detected): package manager=${PM}, test runner=${TEST_RUNNER}. \
-Use the package manager and test runner above (do not hardcode npm/vitest); the \
+Use the package manager and test runner above for executable commands; the \
 .claude/lib/detect-toolchain.sh helpers (pm_run, run_tests, run_typecheck, run_lint, \
 run_build) route commands correctly. Architecture: hybrid layout — feature slices for domain \
 code over a shared/ layer for cross-cutting infra (features depend on shared, never the \
-reverse; no feature-to-feature imports) — with one-way layering (route → service → repository \
-on the backend; component → hook → store on the frontend), shared zod contracts across FE/BE, \
+reverse; avoid direct feature-to-feature imports) — with one-way layering (route → service → repository \
+on the backend; component → hook → Query/API for server state; component → hook/store for UI state), \
+feature-owned zod contracts across FE/BE by default, \
 parse-don't-validate at boundaries."
 
 # Emit JSON via node when available (robust escaping); fall back to printf.

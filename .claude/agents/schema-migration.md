@@ -29,7 +29,7 @@ Ask rather than guessing if detection is unclear.
 Describe the model, field, table, or collection change.
 Describe the migration it implies.
 Call out whether the change is destructive.
-Map the persistence change to the shared zod domain type.
+Map the persistence change to the owning zod domain type.
 Keep domain shape and persistence shape consistent.
 
 ## Step 3 — Apply idiomatically

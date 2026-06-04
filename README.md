@@ -2,12 +2,12 @@
 
 A drop-in collection of **Claude Code** extensibility artifacts — rules, skills, subagents, and hooks — tuned for a modular **React + Express + TypeScript** stack.
 
-It encodes one architecture: feature-based **vertical slices** with one-way layering (`route → service → repository` on the backend, `component → hook → store` on the frontend), **shared zod contracts** across front and back end, and parse-don't-validate at every boundary — then enforces it through Claude Code's native mechanisms.
+It encodes one architecture: feature-based **vertical slices** with one-way layering (`route → service → repository` on the backend, `component → hook → Query/API` for server state, and `component → hook/store` for UI state), **zod contracts shared across front and back end**, and parse-don't-validate at every boundary — then enforces it through Claude Code's native mechanisms.
 
 Two things it deliberately does **not** hardcode:
 
 - **The toolchain.** The package manager (pnpm / npm / yarn) and test runner (Vitest / Jest) are auto-detected at runtime from your lockfile and `package.json` by [`.claude/lib/detect-toolchain.sh`](.claude/lib/detect-toolchain.sh). In a monorepo, detection starts from the active working directory and runs scripts from its nearest package.
-  Every artifact routes through it.
+  Executable workflow commands route through it.
 - **The ORM.** The data layer stays behind a generic repository interface, and the schema/migration subagent adapts to whatever ORM your repo uses (Prisma, Drizzle, Mongoose, Knex, TypeORM, raw SQL, …).
 
 ## The stack at a glance
@@ -27,7 +27,7 @@ Each tool owns one lane, so there's a single obvious place for each kind of work
 | **Tailwind CSS** | Utility-first styling for the UI (v4, wired through the Vite plugin). |
 | **Headless UI** | Unstyled, accessible interactive primitives (dialog, menu, combobox) that pair with Tailwind. |
 
-The flow is one-way — `component → hook → store/query → API` on the frontend, `route → service → repository → data` on the backend — and **server data lives in exactly one place** (TanStack Query), never mirrored into Zustand.
+The flow is one-way — `component → hook → Query/API` for frontend server state, `component → hook/store` for frontend UI state, and `route → service → repository → data` on the backend. **Server data lives in exactly one place** (TanStack Query), never mirrored into Zustand.
 
 ## Install
 
@@ -58,7 +58,7 @@ Restart Claude Code (or start a new session) in the project so it picks up the r
 
 | Rule | Applies to | Enforces |
 | --- | --- | --- |
-| `architecture.md` | *(always on)* | KISS/DRY/SRP/YAGNI, vertical slices, one-way layering, parse-don't-validate, "don't abstract until it earns it". |
+| `architecture.md` | *(always on)* | KISS/DRY/SRP/YAGNI, vertical slices, shared-layer placement, one-way layering, parse-don't-validate, "don't abstract until it earns it". |
 | `typescript.md` | `**/*.{ts,tsx}` | strict TS, no `any`, infer over annotate, discriminated unions, exhaustive switches. |
 | `backend-routes.md` | `**/routes/**`, `**/controllers/**`, `**/*.{route,routes,controller}.ts` | thin handlers: zod-parse → service → response; no logic/data access. |
 | `backend-services.md` | `**/services/**`, `**/*.service.ts` | business logic only; depends on a repository interface; no HTTP leakage. |
@@ -66,7 +66,7 @@ Restart Claude Code (or start a new session) in the project so it picks up the r
 | `frontend-components.md` | `**/components/**/*.tsx` | function components (no `React.FC`); presentational, composable. |
 | `frontend-hooks.md` | `**/hooks/**`, `**/use*.{ts,tsx}` | custom hooks; TanStack Query owns server state. |
 | `frontend-state.md` | `**/store/**`, `**/*.store.ts` | Zustand for UI state only; no mirrored server data. |
-| `shared-contracts.md` | `**/shared/**`, `**/schemas/**`, `**/*.schema.ts` | API/domain zod schemas as single source of truth; excludes persistence/ORM schemas. |
+| `shared-contracts.md` | `**/contracts/**`, `**/schemas/**`, `**/*.schema.ts` | API/domain zod schemas as single source of truth; matched persistence/ORM schemas are classified and excluded. |
 | `testing.md` | `**/*.{test,spec}.{ts,tsx}` | colocated, behavior-focused tests; mocked repos; user-centric RTL. |
 
 Globs use directory-name conventions, so they survive different layouts (`src/`, `src/server`+`src/client`, `apps/web`+`apps/api`, feature folders).
@@ -75,8 +75,8 @@ Globs use directory-name conventions, so they survive different layouts (`src/`,
 
 | Skill | Invoke | Model | Does |
 | --- | --- | --- | --- |
-| `scaffold-feature` | `/scaffold-feature [name] [full\|api\|ui]` | sonnet | Generates a full vertical slice (shared contract → backend layers → frontend layers → tests), wired to your detected layout. |
-| `add-api-contract` | `/add-api-contract [name]` | sonnet | Creates/extends a shared zod contract and wires BE validation + a typed FE call. |
+| `scaffold-feature` | `/scaffold-feature [name] [full\|api\|ui]` | sonnet | Generates a full vertical slice (FE/BE contract → backend layers → frontend layers → tests), wired to your detected layout. |
+| `add-api-contract` | `/add-api-contract [name]` | sonnet | Creates/extends a feature-owned-by-default FE/BE zod contract and wires BE validation + a typed FE call. |
 | `write-tests` | `/write-tests [path]` | sonnet | Writes colocated tests to convention; auto-detects Vitest/Jest. |
 | `run-checks` | `/run-checks` | inherit | Quality gate: typecheck + lint + tests + build via the detected toolchain. |
 | `style-component` | `/style-component [target]` | sonnet | Styles UI with Tailwind v4 utilities and Headless UI primitives; sets up Tailwind if it's missing. |
@@ -118,7 +118,7 @@ The [`docs/`](docs/) directory has a comprehensive guide per artifact type, usin
 - **Adopt the philosophy globally**: import the baseline into your project `CLAUDE.md` with `@.claude/rules/architecture.md`.
 - **Different directory names?** Edit the `paths:` globs in the relevant rule.
 - **Don't want a hook?** Remove its entry from `.claude/settings.json`.
-- The shared detector is the single place to adjust toolchain behavior — nothing else hardcodes a package manager or runner.
+- The shared detector is the single place to adjust executable toolchain behavior; examples may name supported package managers or runners.
 
 ## Requirements
 

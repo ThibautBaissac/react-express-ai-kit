@@ -40,7 +40,7 @@ router.post("/invoices", async (req, res) => {
 
 ## Rules
 
-- Parse `req.body`, `req.params`, and `req.query` with shared zod schemas.
+- Parse `req.body`, `req.params`, and `req.query` with FE/BE contract schemas.
 - Never read raw `req.body.x` before parsing.
 - Do not use `any` on request or response objects.
 - Forward errors to centralized middleware with `next(err)` or an async wrapper.
@@ -49,7 +49,7 @@ router.post("/invoices", async (req, res) => {
 
 ## Checklist
 
-- [ ] Input is parsed with a shared zod schema at the top.
+- [ ] Input is parsed with a FE/BE contract schema at the top.
 - [ ] Handler calls a service and shapes the response.
 - [ ] Handler has no DB or ORM calls.
 - [ ] Handler has no business rules.

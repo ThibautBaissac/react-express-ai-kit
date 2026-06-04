@@ -55,13 +55,13 @@ export function useCreateInvoice() {
 - Call hooks unconditionally at the top level.
 - Memoize returned objects or callbacks only for identity-sensitive consumers.
 - Centralize query keys for each feature.
-- Parse responses with shared zod schemas.
+- Parse responses with FE/BE contract schemas.
 
 ## Checklist
 
 - [ ] Server data uses `useQuery` or `useMutation`.
 - [ ] No `useEffect` fetching for server state.
-- [ ] Responses are parsed with shared zod schemas.
+- [ ] Responses are parsed with FE/BE contract schemas.
 - [ ] Mutations invalidate affected query keys.
 - [ ] Hook has one responsibility.
 - [ ] Query keys are stable and centralized.

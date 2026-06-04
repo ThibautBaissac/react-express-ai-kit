@@ -50,7 +50,7 @@ Read `${CLAUDE_SKILL_DIR}/references/patterns.md` section "TanStack Query integr
 
 Read `${CLAUDE_SKILL_DIR}/references/patterns.md` section "Typed params".
 Treat `params` and `useSearchParams` as untrusted input: parse them with a zod schema into typed values, then trust the type.
-Reuse the feature's shared schema where one already covers the shape.
+Reuse the feature's contract schema where one already covers the shape.
 
 ## Step 6 — Pending and error states
 

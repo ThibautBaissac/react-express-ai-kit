@@ -2,8 +2,10 @@
 
 ## Where it lives
 
-Shared schemas must work in both the browser bundle and Node.
-Use the monorepo shared package, or use an environment-neutral directory such as `src/shared` or `src/contracts`.
+FE/BE contract schemas must work in both the browser bundle and Node.
+Keep a contract in its owning feature by default. Use the monorepo shared package
+or an environment-neutral directory such as `src/shared` or `src/contracts`
+only when the contract is genuinely cross-feature.
 Do not import Express, React, DB clients, or runtime-specific modules here.
 
 ## Parse, don't validate

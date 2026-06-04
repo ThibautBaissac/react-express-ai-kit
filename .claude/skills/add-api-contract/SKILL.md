@@ -1,22 +1,23 @@
 ---
 name: add-api-contract
-description: "Create or extend a shared zod schema as the single source of truth for a FE/BE API shape, then wire backend parsing and a typed frontend call."
+description: "Create or extend the owning zod schema as the single source of truth for a FE/BE API shape, then wire backend parsing and a typed frontend call."
 when_to_use: "Use WHEN adding or changing an API request shape, response shape, DTO, or React/Express boundary contract. Do NOT use for internal-only types or DB schema changes; use the schema-migration subagent for schema and migration work."
 argument-hint: "[contract-name]"
 arguments: [contract]
 model: sonnet
 ---
 
-# Add or extend a shared API contract
+# Add or extend an API contract
 
 Define the shape once in zod, and import it from both sides.
 Contract: `$contract`.
 
-## Step 1 — Locate the shared module
+## Step 1 — Locate the owning feature
 
-Find where shared schemas live, using `references/zod-patterns.md` section "Where it lives".
-Use the existing shared package in a monorepo, or the existing environment-neutral directory such as `src/shared` or `src/contracts`.
-Create a shared location only when none exists.
+Find the owning feature and its existing contract location, using
+`references/zod-patterns.md` section "Where it lives". Keep the contract in the
+feature by default. Use an existing shared package or contracts directory only
+when the contract is genuinely cross-feature.
 
 ## Step 2 — Define schema first
 
@@ -27,7 +28,7 @@ Read `references/zod-patterns.md` and apply it.
 
 ## Step 3 — Wire the backend
 
-Parse `req.body`, `req.params`, and `req.query` at the route boundary with the shared schema.
+Parse `req.body`, `req.params`, and `req.query` at the route boundary with the contract schema.
 Follow any existing validation middleware pattern; otherwise parse inline and forward failures with `next(err)`.
 Keep handlers thin: parse input, call the service, shape the response.
 
@@ -48,7 +49,7 @@ Confirm both sides import the same schema and no duplicate interface remains.
 
 ## Checklist
 
-- [ ] Schema lives once in a shared, environment-neutral module.
+- [ ] Schema lives once in its owning feature, or in a shared module only when genuinely cross-feature.
 - [ ] Types use `z.infer`, and variants are derived without copy-paste.
 - [ ] Backend parses untrusted input at the boundary.
 - [ ] Frontend parses responses and types requests from the schema.

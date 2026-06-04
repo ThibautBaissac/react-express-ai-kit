@@ -14,8 +14,7 @@ state, contracts, and tests. Domain code always lives in a feature.
 The **`shared/` layer** holds cross-cutting infrastructure that several features
 build on — the db/http clients, config, logger, environment-neutral zod
 contracts, and generic UI primitives. It is a first-class home from the start,
-not a reluctant afterthought. See `shared-layer.md` for what does and does not
-belong there.
+not a reluctant afterthought.
 
 ```
 features/invoice/
@@ -34,17 +33,29 @@ shared/
   contracts/             # cross-feature zod contracts (FE + BE)
 ```
 
-**Cross-cutting infra is allowed up front.** What stays earned is *domain*
-abstraction: do not promote feature code into `shared/` for reuse — if two
-features need the same domain logic, that is a design conversation, not a copy
-into `shared/`. `shared/` is for things that are generic by nature, not for
-de-duplicating domain code.
+### What belongs in `shared/`
+
+- Infrastructure clients — db, http/fetch, queue, cache.
+- Parsed config and environment values.
+- Logging and observability.
+- Environment-neutral cross-feature contracts.
+- Generic, domain-free UI primitives and utilities.
+
+### What does not belong in `shared/`
+
+- Domain logic or feature components with domain props.
+- Feature code moved only to avoid duplication.
+
+If you cannot name the code without naming a feature, it does not belong in
+`shared/`. Cross-cutting infra is allowed up front; domain code remains
+feature-owned.
 
 ## Keep dependencies one-way
 
 ```
 Backend:  route → service → repository → (data source)
-Frontend: component → hook → store/query client → (API)
+Frontend server state: component → hook → Query client → (API)
+Frontend UI state:     component → hook/store
 ```
 
 A layer depends only on the layer below it, through a typed interface when possible.
@@ -57,11 +68,13 @@ Dependencies across the hybrid layout flow one way too:
 ```
 feature → shared        (allowed)
 shared  → feature       (never — no back-dependency)
-feature → feature       (never — go through shared)
+feature → feature       (avoid direct dependencies)
 ```
 
 A feature may import from `shared/`; `shared/` must never import from a feature,
-and features must not import each other.
+and features should not import each other. If domain code appears to require a
+feature-to-feature dependency, reconsider the feature boundary or coordinate
+the features from a composition root; do not move domain code into `shared/`.
 
 ## Use the five disciplines
 
@@ -90,7 +103,7 @@ Avoid deep prop drilling, inheritance trees, and config objects with many option
 
 - [ ] New code lives in its feature slice, or in `shared/` only if it is genuinely cross-cutting infra.
 - [ ] No domain logic leaked into `shared/`.
-- [ ] `shared/` has no back-dependency on a feature; features do not import each other.
+- [ ] `shared/` has no back-dependency on a feature; direct feature dependencies are avoided.
 - [ ] Dependencies flow one way through typed interfaces.
 - [ ] Routes do not call the DB.
 - [ ] Services do not receive Express objects.

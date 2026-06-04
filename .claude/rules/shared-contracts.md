@@ -1,21 +1,20 @@
 ---
 paths:
-  - "**/shared/**/*.ts"
   - "**/contracts/**/*.ts"
   - "**/schemas/**/*.ts"
   - "**/*.schema.ts"
 ---
 
-# Shared API contracts
+# FE/BE API contracts
 
-This rule governs the **contracts** subset of the `shared/` layer (the zod
-schemas and `*.schema.ts` files). The broader `shared/` layer — infra clients,
-config, UI primitives — is governed by `shared-layer.md`.
+This rule governs zod API or domain contracts, whether feature-owned or
+cross-feature. The broader `shared/` layer — infra clients, config, UI
+primitives — is governed by `architecture.md`.
 
-Apply this rule only to shared API or domain contracts.
-It does not apply to persistence or ORM schemas, such as Drizzle table
-definitions. Those stay behind the repository boundary and follow the detected
-data tool's conventions.
+The path globs can also match persistence or ORM schemas, such as Drizzle table
+definitions. Classify the file before applying this rule; persistence schemas
+stay behind the repository boundary and follow the detected data tool's
+conventions.
 
 These files are the single source of truth for FE/BE data shapes.
 Both sides import them.

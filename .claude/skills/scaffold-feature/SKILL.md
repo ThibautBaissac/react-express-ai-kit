@@ -1,6 +1,6 @@
 ---
 name: scaffold-feature
-description: "Scaffold a vertical-slice React + Express + TypeScript feature with a shared zod contract, backend route → service → repository, frontend component → hook → store, and colocated tests."
+description: "Scaffold a vertical-slice React + Express + TypeScript feature with a FE/BE zod contract, backend route → service → repository, frontend Query hooks and optional UI state, and colocated tests."
 when_to_use: "Use WHEN the user asks to add a feature, endpoint, resource, CRUD flow, or vertical slice. Use `api` for backend-only work and `ui` for frontend-only work. Do NOT use for one-off edits or DB schema changes; use the schema-migration subagent for schema work."
 argument-hint: "[feature-name] [full|api|ui]"
 arguments: [feature, mode]
@@ -64,7 +64,7 @@ Report created files, verification results, and required follow-ups such as fill
 
 - [ ] Toolchain and layout were detected.
 - [ ] Files match the repo's existing structure.
-- [ ] Shared zod schema is the single source of truth.
+- [ ] The FE/BE zod contract is the single source of truth.
 - [ ] Backend layers are route → service → repository interface.
-- [ ] Frontend layers are component → hook → store only when needed.
+- [ ] Frontend server state flows component → hook → Query/API; stores hold UI state only when needed.
 - [ ] Colocated tests exist and pass through the detected runner.

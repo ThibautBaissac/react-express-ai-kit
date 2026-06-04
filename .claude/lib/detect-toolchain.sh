@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # detect-toolchain.sh — single source of truth for package manager + test runner.
 #
-# NEVER hardcode pnpm/npm/yarn or vitest/jest anywhere else. Source this file
-# and use PM / PM_RUN / PM_EXEC / TEST_RUNNER and the run_* helpers instead.
+# Route executable package-manager and test-runner commands through this file.
+# Examples may name supported tools; workflows use PM / PM_RUN / PM_EXEC /
+# TEST_RUNNER and the run_* helpers.
 #
 # Usage:
 #   source "<path>/detect-toolchain.sh"      # then call pm_run / run_tests / ...
