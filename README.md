@@ -24,6 +24,8 @@ Each tool owns one lane, so there's a single obvious place for each kind of work
 | **Zustand** | Holds small UI-only state (e.g. is this panel open). |
 | **Express** | The backend HTTP server that answers API requests. |
 | **zod** | Validates data at every boundary and is the shared FE/BE contract. |
+| **Tailwind CSS** | Utility-first styling for the UI (v4, wired through the Vite plugin). |
+| **Headless UI** | Unstyled, accessible interactive primitives (dialog, menu, combobox) that pair with Tailwind. |
 
 The flow is one-way — `component → hook → store/query → API` on the frontend, `route → service → repository → data` on the backend — and **server data lives in exactly one place** (TanStack Query), never mirrored into Zustand.
 
@@ -77,6 +79,7 @@ Globs use directory-name conventions, so they survive different layouts (`src/`,
 | `add-api-contract` | `/add-api-contract [name]` | sonnet | Creates/extends a shared zod contract and wires BE validation + a typed FE call. |
 | `write-tests` | `/write-tests [path]` | sonnet | Writes colocated tests to convention; auto-detects Vitest/Jest. |
 | `run-checks` | `/run-checks` | inherit | Quality gate: typecheck + lint + tests + build via the detected toolchain. |
+| `style-component` | `/style-component [target]` | sonnet | Styles UI with Tailwind v4 utilities and Headless UI primitives; sets up Tailwind if it's missing. |
 
 Meatier skills keep templates and patterns in a `references/` subdirectory that loads only when needed.
 

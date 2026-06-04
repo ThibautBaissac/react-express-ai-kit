@@ -55,7 +55,7 @@ features/<feature>/
 
 ## Skills (invoke with `/name`)
 
-`/scaffold-feature` · `/add-api-contract` · `/react-router` · `/write-tests` · `/run-checks`
+`/scaffold-feature` · `/add-api-contract` · `/react-router` · `/style-component` · `/write-tests` · `/run-checks`
 
 ## Deeper docs (loaded on demand)
 
