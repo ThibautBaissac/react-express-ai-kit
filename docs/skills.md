@@ -99,7 +99,7 @@ So the body should be the *procedure*; the bulky material belongs in `references
 ```markdown
 ## Step 3 — Generate the slice
 Read `references/slice-templates.md` for the canonical templates and adapt them. Order:
-1. Shared contract …
+1. Contract …
 ```
 
 Compare the two files in [`scaffold-feature`](../.claude/skills/scaffold-feature/): the `SKILL.md` is a tight 5-step procedure; the heavy templates and layout-detection heuristics live in `references/` and load only when that step runs.

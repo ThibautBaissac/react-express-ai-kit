@@ -35,7 +35,8 @@ Style element states with the data-attribute API (`data-[open]`, `data-[selected
 ## Step 4 — Keep it presentational and DRY-by-earn
 
 - No `useQuery`/`fetch` in the component — data arrives via props or a hook.
-- Extract a styled component or a shared class cluster only after a third real use; prefer duplication until then.
+- Generic, domain-free primitives (`Button`, `Card`, `Dialog`) belong in `shared/ui` from the start.
+- For *domain* styled components, extract a shared cluster only after a third real use; prefer duplication until then.
 
 ## Step 5 — Verify
 
@@ -53,5 +54,5 @@ run_build
 - [ ] Interactive widgets use Headless UI, not hand-rolled ARIA.
 - [ ] Classes use design tokens; arbitrary values only when no token fits.
 - [ ] Component stays presentational — no data fetching or business logic.
-- [ ] No styled abstraction added before its third real use.
+- [ ] Domain-free primitives live in `shared/ui`; no domain styled abstraction added before its third real use.
 - [ ] `run_typecheck` and `run_build` pass.

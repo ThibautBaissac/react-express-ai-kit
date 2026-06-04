@@ -32,7 +32,7 @@ If fields are missing, ask once or infer the smallest useful shape.
 
 Read `references/slice-templates.md` and adapt the templates to the detected layout.
 
-1. **Shared contract** — Create `*.schema.ts` with a zod schema, `z.infer` types, and derived request/response shapes.
+1. **Contract** — Create `*.schema.ts` with a zod schema, `z.infer` types, and derived request/response shapes. Keep it in the feature; place it in the shared contracts dir only if the shape is genuinely cross-feature.
 2. **Backend** — For `full` or `api`, create `*.repository.ts`, `*.service.ts`, and `*.routes.ts`, then register the router where existing routers mount.
 3. **Frontend** — For `full` or `ui`, create a TanStack Query hook, presentational components, and a store only when UI state needs one.
 4. **Tests** — Add colocated service and component tests using the detected runner and existing test style.
@@ -56,6 +56,7 @@ Report created files, verification results, and required follow-ups such as fill
 - TanStack Query owns server state.
 - Stores hold UI state only when needed.
 - Zod schemas are the single source of truth for FE/BE shapes.
+- Domain code goes in the feature slice; keep domain logic out of `shared/` (cross-cutting infra only).
 - Do not add abstractions, stores, config, or framework changes before they earn it.
 - Route every runner call through `detect-toolchain.sh`.
 

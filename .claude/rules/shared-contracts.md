@@ -8,6 +8,10 @@ paths:
 
 # Shared API contracts
 
+This rule governs the **contracts** subset of the `shared/` layer (the zod
+schemas and `*.schema.ts` files). The broader `shared/` layer — infra clients,
+config, UI primitives — is governed by `shared-layer.md`.
+
 Apply this rule only to shared API or domain contracts.
 It does not apply to persistence or ORM schemas, such as Drizzle table
 definitions. Those stay behind the repository boundary and follow the detected

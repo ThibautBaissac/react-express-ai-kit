@@ -17,9 +17,11 @@ LIB="${CLAUDE_PROJECT_DIR:-$PWD}/.claude/lib/detect-toolchain.sh"
 CONTEXT="Toolchain (auto-detected): package manager=${PM}, test runner=${TEST_RUNNER}. \
 Use the package manager and test runner above (do not hardcode npm/vitest); the \
 .claude/lib/detect-toolchain.sh helpers (pm_run, run_tests, run_typecheck, run_lint, \
-run_build) route commands correctly. Architecture: vertical slices with one-way layering \
-(route → service → repository on the backend; component → hook → store on the frontend), \
-shared zod contracts across FE/BE, parse-don't-validate at boundaries."
+run_build) route commands correctly. Architecture: hybrid layout — feature slices for domain \
+code over a shared/ layer for cross-cutting infra (features depend on shared, never the \
+reverse; no feature-to-feature imports) — with one-way layering (route → service → repository \
+on the backend; component → hook → store on the frontend), shared zod contracts across FE/BE, \
+parse-don't-validate at boundaries."
 
 # Emit JSON via node when available (robust escaping); fall back to printf.
 # CONTEXT contains no double quotes/newlines, so the printf fallback is also valid JSON.

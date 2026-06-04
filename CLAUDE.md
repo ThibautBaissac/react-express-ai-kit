@@ -28,18 +28,24 @@ Direct equivalents (adjust to your package manager): `<pm> install`, `<pm> dev`,
 
 ## Where things live
 
-Code is organized by **feature (vertical slice)**, not by technical layer:
+**Hybrid layout:** domain code in **feature slices**, cross-cutting infra in a **`shared/` layer**.
 
 ```
-features/<feature>/
-  <feature>.schema.ts       # shared zod contract (FE + BE)
+features/<feature>/         # one slice owns its domain end to end
+  <feature>.schema.ts       # zod contract for this feature (FE + BE)
   <feature>.routes.ts       # thin Express handlers
   <feature>.service.ts      # business logic
   <feature>.repository.ts   # data access (ORM-agnostic)
   components/  hooks/  store/  <feature>.routes.tsx   # frontend slice
   *.test.ts                 # colocated tests
+
+shared/                     # cross-cutting infra only — never domain logic
+  ui/                       # generic, domain-free UI primitives
+  lib/                      # db/http client, logger, config
+  contracts/                # cross-feature zod contracts (FE + BE)
 ```
 
+- Domain code always lives in a feature; `shared/` is for things generic by nature. See @.claude/rules/shared-layer.md.
 - Adjust the root to your layout (`src/`, `apps/web` + `apps/api`, etc.).
 - ORM: `<Prisma | Drizzle | Mongoose | … >`, behind the repository interface.
 
@@ -47,10 +53,11 @@ features/<feature>/
 
 - **One-way flow.** Backend `route → service → repository → data`; frontend `component → hook → store/query → API`.
   Never skip or reverse a layer; no DB calls in routes; never pass `req`/`res` into services.
+- **Features depend on `shared/`, never the reverse.** No feature-to-feature imports; keep domain logic out of `shared/`.
 - **One source of truth for server data:** TanStack Query.
   Never mirror server data into Zustand.
 - **Parse, don't validate.** Convert untrusted input (req body/params/query, API responses, URL params) into typed values with zod at the boundary, then trust the type.
-- **No new abstraction before its third real use.** Prefer duplication over the wrong abstraction.
+- **No new domain abstraction before its third real use.** Prefer duplication over the wrong abstraction. (Cross-cutting infra in `shared/` is exempt — stand it up when first needed.)
 - Don't run a linter's job by hand — let the format/lint hook handle style.
 
 ## Skills (invoke with `/name`)

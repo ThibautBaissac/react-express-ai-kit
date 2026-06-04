@@ -1,9 +1,10 @@
-# Vertical-slice templates
+# Feature-slice templates
 
 Adapt these templates to the detected layout and naming. `Invoice` is the example feature; replace it with the real feature name.
 Keep generated code minimal, and delete parts the feature does not need.
+These files make up the feature slice; in a hybrid layout they live under the feature, not in `shared/`.
 
-## 1. Shared contract — `invoice.schema.ts`
+## 1. Contract — `invoice.schema.ts`
 
 ```ts
 import { z } from "zod";

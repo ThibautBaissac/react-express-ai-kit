@@ -50,7 +50,12 @@ function InvoiceListContainer() {
 
 Build small components with props, children, and slots.
 Avoid one component with many boolean flags.
-Extract shared components only after a third real use.
+
+Generic, domain-free UI primitives (`Button`, `Input`, `Dialog`) live in
+`shared/ui` from the start. Promote a *domain* component out of its feature only
+after a third real use proves the shape — and if it still carries domain props
+it stays in the feature; two features needing it is the signal to extract a
+domain-free primitive, not to copy a feature component.
 
 ## Rules
 

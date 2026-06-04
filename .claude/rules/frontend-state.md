@@ -11,6 +11,10 @@ Use stores for global client/UI state such as theme, sidebar, wizard step, and s
 Keep server data in TanStack Query.
 Do not mirror server data in Zustand.
 
+A store lives where its concern lives: a feature's UI store stays in the feature
+(`features/<feature>/store/`); a genuinely cross-cutting store (theme, session,
+layout) belongs in `shared/`.
+
 ## Do not duplicate server state
 
 ```ts
