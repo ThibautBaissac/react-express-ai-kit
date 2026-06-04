@@ -62,18 +62,28 @@ import clsx from "clsx";
 
 ## Headless UI primitives
 
-Install `@headlessui/react` only when needed. Use it for anything with keyboard/focus/ARIA behavior; you own the Tailwind classes, it owns the accessibility.
+Install `@headlessui/react` only when needed. Before hand-rolling an interactive widget or form control, check whether one of these documented component families provides the behavior. You own the Tailwind classes; Headless UI owns the keyboard, focus, and ARIA behavior.
 
-| Need | Component |
-| --- | --- |
-| Modal / dialog | `Dialog`, `DialogPanel`, `DialogTitle` |
-| Dropdown menu | `Menu`, `MenuButton`, `MenuItems`, `MenuItem` |
-| Select | `Listbox` (single) / `Combobox` (typeahead) |
-| Popover | `Popover`, `PopoverButton`, `PopoverPanel` |
-| Tabs | `TabGroup`, `TabList`, `Tab`, `TabPanels`, `TabPanel` |
-| Toggle | `Switch` |
-| Accordion | `Disclosure` |
-| Animation | `Transition` / the `transition` prop |
+| Category | Need | Component family |
+| --- | --- | --- |
+| Interactive | Dropdown menu | `Menu` |
+| Interactive | Accordion / collapsible section | `Disclosure` |
+| Interactive | Modal / dialog | `Dialog` |
+| Interactive | Popover | `Popover` |
+| Interactive | Tabs | `TabGroup` |
+| Interactive | Animation | `Transition` / the `transition` prop |
+| Form | Button | `Button` |
+| Form | Checkbox | `Checkbox` |
+| Form | Typeahead select | `Combobox` |
+| Form | Group related fields | `Fieldset` |
+| Form | Text input | `Input` |
+| Form | Custom select | `Listbox` |
+| Form | Radio options | `RadioGroup` |
+| Form | Native select | `Select` |
+| Form | Toggle | `Switch` |
+| Form | Multiline text input | `Textarea` |
+
+Consult the relevant Headless UI documentation for the family's nested components and API, such as `MenuButton`/`MenuItems`/`MenuItem` or `DialogPanel`/`DialogTitle`.
 
 ### Style states with the data-attribute API (v2.1+)
 

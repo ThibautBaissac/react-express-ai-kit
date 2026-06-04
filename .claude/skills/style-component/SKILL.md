@@ -27,7 +27,8 @@ Read `references/styling-patterns.md` and apply it.
 
 ## Step 3 — Use Headless UI for interactive primitives
 
-For dialogs, menus, comboboxes, listboxes, popovers, tabs, switches, disclosures, and transitions, use Headless UI instead of hand-rolling.
+Consult the component inventory in `references/styling-patterns.md` before hand-rolling an interactive widget or form control.
+When Headless UI provides the needed behavior, use it instead of rebuilding it.
 It ships the keyboard, focus, and ARIA behavior; you supply the Tailwind classes.
 Style element states with the data-attribute API (`data-[open]`, `data-[selected]`, `data-[focus]`) and animate with `<Transition>` / the `transition` prop.
 
