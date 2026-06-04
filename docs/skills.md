@@ -1,27 +1,21 @@
 # Guide: Skills
 
-A skill packages a repeatable procedure, workflow, or body of reference material into a
-`SKILL.md` file that Claude loads **on demand** — when your request matches its
-description, or when you invoke it with `/skill-name`. Because it loads only when needed,
-a skill can carry deep reference material that costs almost nothing until used.
+A skill packages a repeatable procedure, workflow, or body of reference material into a `SKILL.md` file that Claude loads **on demand** — when your request matches its description, or when you invoke it with `/skill-name`.
+Because it loads only when needed, a skill can carry deep reference material that costs almost nothing until used.
 
-> Custom commands and skills are the same mechanism. A skill you trigger manually is a
-> [slash command](./slash-commands.md) — that guide covers the `disable-model-invocation`
-> pattern. This guide covers skills in general.
+> Custom commands and skills are the same mechanism.
+> A skill you trigger manually is a [slash command](./slash-commands.md) — that guide covers the `disable-model-invocation` pattern.
+> This guide covers skills in general.
 
 > See also: [conventions](./conventions.md) · [when to use what](./README.md#which-mechanism-do-i-use)
 
 ## When to use a skill
 
-- A **multi-step procedure** you'd otherwise paste repeatedly: scaffold a feature, add an
-  API contract, cut a release.
-- **Reference material** that's too big for a rule and only needed sometimes: zod patterns,
-  testing recipes, a style playbook.
+- A **multi-step procedure** you'd otherwise paste repeatedly: scaffold a feature, add an API contract, cut a release.
+- **Reference material** that's too big for a rule and only needed sometimes: zod patterns, testing recipes, a style playbook.
 - A workflow that should be **discoverable** (`/name`) and/or **auto-invoked** when relevant.
 
-Use something else when the content is an always-true convention ([rule](./rules.md)), must
-run deterministically ([hook](./hooks.md)), or is a self-contained delegated task that would
-clutter your context ([subagent](./subagents.md)).
+Use something else when the content is an always-true convention ([rule](./rules.md)), must run deterministically ([hook](./hooks.md)), or is a self-contained delegated task that would clutter your context ([subagent](./subagents.md)).
 
 ## Anatomy
 
@@ -33,13 +27,12 @@ clutter your context ([subagent](./subagents.md)).
     └── slice-templates.md
 ```
 
-The **directory name** becomes the command (`/scaffold-feature`). `SKILL.md` is the entry
-point; everything else is optional supporting material you reference from it.
+The **directory name** becomes the command (`/scaffold-feature`). `SKILL.md` is the entry point; everything else is optional supporting material you reference from it.
 
 ## Frontmatter reference
 
-Only the body is strictly required, but a real skill sets `description` (and usually
-`when_to_use`). All documented fields:
+Only the body is strictly required, but a real skill sets `description` (and usually `when_to_use`).
+All documented fields:
 
 ```yaml
 ---
@@ -96,14 +89,12 @@ Inside `SKILL.md` you can interpolate:
 | `${CLAUDE_SESSION_ID}` | Current session id |
 | `${CLAUDE_EFFORT}` | Current effort level |
 
-This repo's `scaffold-feature` uses `$feature` and `$mode` (declared via
-`arguments: [feature, mode]`) to parameterize the slice it generates.
+This repo's `scaffold-feature` uses `$feature` and `$mode` (declared via `arguments: [feature, mode]`) to parameterize the slice it generates.
 
 ## Progressive disclosure: keep the body lean, push depth to `references/`
 
-The body of a loaded skill **stays in context across turns**. So the body should be the
-*procedure*; the bulky material belongs in `references/` files the skill reads only when it
-reaches that step.
+The body of a loaded skill **stays in context across turns**.
+So the body should be the *procedure*; the bulky material belongs in `references/` files the skill reads only when it reaches that step.
 
 ```markdown
 ## Step 3 — Generate the slice
@@ -111,45 +102,41 @@ Read `references/slice-templates.md` for the canonical templates and adapt them.
 1. Shared contract …
 ```
 
-Compare the two files in [`scaffold-feature`](../.claude/skills/scaffold-feature/): the
-`SKILL.md` is a tight 5-step procedure; the heavy templates and layout-detection heuristics
-live in `references/` and load only when that step runs. That's the pattern to copy.
+Compare the two files in [`scaffold-feature`](../.claude/skills/scaffold-feature/): the `SKILL.md` is a tight 5-step procedure; the heavy templates and layout-detection heuristics live in `references/` and load only when that step runs.
+That's the pattern to copy.
 
 ## A strong skill, step by step
 
 Using [`add-api-contract`](../.claude/skills/add-api-contract/SKILL.md) as the model:
 
-1. **Frontmatter** with a WHEN/WHEN-NOT description, an `argument-hint`, and a routed
-   `model`.
-2. **A numbered procedure** — each step is an imperative instruction, not prose. "Locate
-   the shared module", "Define schema first, derive types", "Wire the backend", "Verify".
-3. **Delegate detail to a reference** — "Read `references/zod-patterns.md` and apply it" —
-   instead of inlining 100 lines of patterns.
+1. **Frontmatter** with a WHEN/WHEN-NOT description, an `argument-hint`, and a routed `model`.
+2. **A numbered procedure** — each step is an imperative instruction, not prose.
+   "Locate the shared module", "Define schema first, derive types", "Wire the backend", "Verify".
+3. **Delegate detail to a reference** — "Read `references/zod-patterns.md` and apply it" — instead of inlining 100 lines of patterns.
 4. **A verify step** that runs the real toolchain (`source detect-toolchain.sh; run_typecheck`).
-5. **A closing checklist** that restates the invariants ("Type is `z.infer`; variants
-   derived; both sides import the same schema").
+5. **A closing checklist** that restates the invariants ("Type is `z.infer`; variants derived; both sides import the same schema").
 
 ### Make skills do real work, not just talk
 
-A skill that runs commands should detect the toolchain rather than assume it. Every skill
-in this repo opens with:
+A skill that runs commands should detect the toolchain rather than assume it.
+Every skill in this repo opens with:
 
 ```bash
 bash "${CLAUDE_PROJECT_DIR}/.claude/lib/detect-toolchain.sh"
 ```
 
-…and verifies with `run_typecheck` / `run_tests`. The result: the skill works whether the
-project uses pnpm+Vitest or npm+Jest, with no edits.
+…and verifies with `run_typecheck` / `run_tests`.
+The result: the skill works whether the project uses pnpm+Vitest or npm+Jest, with no edits.
 
 ## Common mistakes
 
-- **Vague description** → the skill never auto-loads. Put the user's words and the
-  exclusions in `description`/`when_to_use`.
-- **Everything in `SKILL.md`** → recurring token cost and a wall of text. Move references out.
-- **A side-effecting skill Claude can trigger** → set `disable-model-invocation: true` so
-  *you* decide when to deploy/commit/send.
-- **Narrating instead of instructing** → "First, it's important to understand that…" wastes
-  tokens. Say "Parse the body with the shared schema."
+- **Vague description** → the skill never auto-loads.
+  Put the user's words and the exclusions in `description`/`when_to_use`.
+- **Everything in `SKILL.md`** → recurring token cost and a wall of text.
+  Move references out.
+- **A side-effecting skill Claude can trigger** → set `disable-model-invocation: true` so *you* decide when to deploy/commit/send.
+- **Narrating instead of instructing** → "First, it's important to understand that…" wastes tokens.
+  Say "Parse the body with the shared schema."
 - **Hardcoded `npm`/`vitest`** → detect at runtime instead.
 
 ## Checklist for a skill you're writing

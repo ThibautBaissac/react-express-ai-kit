@@ -9,13 +9,12 @@ model: sonnet
 
 # Add React Router v7 routing
 
-This stack is a Vite React SPA talking to a separate Express API, with TanStack Query owning
-server state. The matching React Router mode is **Data Mode** — `createBrowserRouter` +
-`RouterProvider`, importing everything from the single `react-router` package (v7). Route: `$route`.
+This stack is a Vite React SPA talking to a separate Express API, with TanStack Query owning server state.
+The matching React Router mode is **Data Mode** — `createBrowserRouter` + `RouterProvider`, importing everything from the single `react-router` package (v7).
+Route: `$route`.
 
-Do **not** use Framework Mode: it is a full-stack SSR framework (the successor to Remix) that
-would take over the role Express already plays. Do **not** use bare Declarative Mode either —
-Data Mode adds the pending states, error boundaries, and route-level orchestration this app wants.
+Do **not** use Framework Mode: it is a full-stack SSR framework (the successor to Remix) that would take over the role Express already plays.
+Do **not** use bare Declarative Mode either — Data Mode adds the pending states, error boundaries, and route-level orchestration this app wants.
 
 ## Step 1 — Detect the toolchain and ensure the dep
 
@@ -23,18 +22,15 @@ Data Mode adds the pending states, error boundaries, and route-level orchestrati
 source "${CLAUDE_PROJECT_DIR}/.claude/lib/detect-toolchain.sh"
 ```
 
-If `react-router` is not in the frontend `package.json`, add it with the detected package
-manager (it is one package — there is no separate `react-router-dom` in v7). Confirm the
-installed major version is 7.
+If `react-router` is not in the frontend `package.json`, add it with the detected package manager (it is one package — there is no separate `react-router-dom` in v7).
+Confirm the installed major version is 7.
 
 ## Step 2 — Place routing inside the feature slices
 
-Keep routing on the frontend side of the layout and inside vertical slices — never under a
-backend `routes/` directory (that name is owned by the backend-routes rule).
-- One composition root, e.g. `app/router.tsx`, calls `createBrowserRouter` and is rendered by
-  `<RouterProvider>` at the app entry.
-- Each feature exports its own route objects (e.g. `features/invoice/invoice.routes.tsx`) that the
-  root composes. A feature owns its routes like it owns its components and hooks.
+Keep routing on the frontend side of the layout and inside vertical slices — never under a backend `routes/` directory (that name is owned by the backend-routes rule).
+- One composition root, e.g. `app/router.tsx`, calls `createBrowserRouter` and is rendered by `<RouterProvider>` at the app entry.
+- Each feature exports its own route objects (e.g. `features/invoice/invoice.routes.tsx`) that the root composes.
+  A feature owns its routes like it owns its components and hooks.
 
 ## Step 3 — Define routes with lazy code-splitting
 
@@ -45,23 +41,21 @@ Read `${CLAUDE_SKILL_DIR}/references/patterns.md` (sections "Router setup" and "
 ## Step 4 — Keep TanStack Query the source of truth for server data
 
 Read `${CLAUDE_SKILL_DIR}/references/patterns.md` section "TanStack Query integration".
-- Components keep fetching through their `useQuery`/`useMutation` hooks. Do not re-fetch the same
-  server data inside a `loader` and return it as a parallel source of truth.
-- If a route needs to prefetch, have its `loader` call `queryClient.ensureQueryData(...)` for the
-  feature's existing query key, then let the component read it via the same `useQuery` (warm cache).
-- Use `action` only for non-Query mutations or progressive-enhancement forms; otherwise mutate via
-  the existing TanStack Query mutation hook and invalidate keys.
+- Components keep fetching through their `useQuery`/`useMutation` hooks.
+  Do not re-fetch the same server data inside a `loader` and return it as a parallel source of truth.
+- If a route needs to prefetch, have its `loader` call `queryClient.ensureQueryData(...)` for the feature's existing query key, then let the component read it via the same `useQuery` (warm cache).
+- Use `action` only for non-Query mutations or progressive-enhancement forms; otherwise mutate via the existing TanStack Query mutation hook and invalidate keys.
 
 ## Step 5 — Parse URL and search params at the boundary
 
-Read `${CLAUDE_SKILL_DIR}/references/patterns.md` section "Typed params". Treat `params` and
-`useSearchParams` as untrusted input: parse them with a zod schema into typed values, then trust the
-type. Reuse the feature's shared schema where one already covers the shape.
+Read `${CLAUDE_SKILL_DIR}/references/patterns.md` section "Typed params".
+Treat `params` and `useSearchParams` as untrusted input: parse them with a zod schema into typed values, then trust the type.
+Reuse the feature's shared schema where one already covers the shape.
 
 ## Step 6 — Pending and error states
 
-Surface navigation pending state with `useNavigation`, and give routes an `ErrorBoundary` (route
-object `ErrorBoundary`/`errorElement`) using `useRouteError`. See the references file.
+Surface navigation pending state with `useNavigation`, and give routes an `ErrorBoundary` (route object `ErrorBoundary`/`errorElement`) using `useRouteError`.
+See the references file.
 
 ## Step 7 — Verify
 

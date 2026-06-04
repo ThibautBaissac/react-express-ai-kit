@@ -9,7 +9,8 @@ model: sonnet
 
 # Write tests to convention
 
-Target: `$target`. Put tests next to the code under test.
+Target: `$target`.
+Put tests next to the code under test.
 
 ## Step 1 — Detect runner and style
 

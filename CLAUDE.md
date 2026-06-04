@@ -1,15 +1,15 @@
 # CLAUDE.md
 
 Generic project memory for a React + Express + TypeScript app using this `.claude/` pack.
-Loaded every session — keep it lean. Rule of thumb: if removing a line wouldn't cause a
-mistake, cut it. Fill in the `<…>` placeholders; delete what doesn't apply.
+Loaded every session — keep it lean.
+Rule of thumb: if removing a line wouldn't cause a mistake, cut it.
+Fill in the `<…>` placeholders; delete what doesn't apply.
 
 ## What this project is
 
 <One sentence: what the app does and who it's for.>
-A Vite React SPA talking to a separate Express API, both in TypeScript. Server state lives in
-TanStack Query; UI-only state in Zustand; routing via React Router (Data Mode); data validated
-at every boundary with shared zod contracts.
+A Vite React SPA talking to a separate Express API, both in TypeScript.
+Server state lives in TanStack Query; UI-only state in Zustand; routing via React Router (Data Mode); data validated at every boundary with shared zod contracts.
 
 ## Commands
 
@@ -45,12 +45,11 @@ features/<feature>/
 
 ## Rules that prevent mistakes
 
-- **One-way flow.** Backend `route → service → repository → data`; frontend
-  `component → hook → store/query → API`. Never skip or reverse a layer; no DB calls in routes;
-  never pass `req`/`res` into services.
-- **One source of truth for server data:** TanStack Query. Never mirror server data into Zustand.
-- **Parse, don't validate.** Convert untrusted input (req body/params/query, API responses, URL
-  params) into typed values with zod at the boundary, then trust the type.
+- **One-way flow.** Backend `route → service → repository → data`; frontend `component → hook → store/query → API`.
+  Never skip or reverse a layer; no DB calls in routes; never pass `req`/`res` into services.
+- **One source of truth for server data:** TanStack Query.
+  Never mirror server data into Zustand.
+- **Parse, don't validate.** Convert untrusted input (req body/params/query, API responses, URL params) into typed values with zod at the boundary, then trust the type.
 - **No new abstraction before its third real use.** Prefer duplication over the wrong abstraction.
 - Don't run a linter's job by hand — let the format/lint hook handle style.
 

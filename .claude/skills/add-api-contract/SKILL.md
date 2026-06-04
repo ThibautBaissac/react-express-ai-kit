@@ -9,7 +9,8 @@ model: sonnet
 
 # Add or extend a shared API contract
 
-Define the shape once in zod, and import it from both sides. Contract: `$contract`.
+Define the shape once in zod, and import it from both sides.
+Contract: `$contract`.
 
 ## Step 1 — Locate the shared module
 

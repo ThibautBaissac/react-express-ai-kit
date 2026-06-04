@@ -9,7 +9,9 @@ model: sonnet
 
 # Scaffold a vertical-slice feature
 
-Generate one cohesive feature slice that matches the project's existing structure. Feature: `$feature`. Mode: `$mode` or `full`.
+Generate one cohesive feature slice that matches the project's existing structure.
+Feature: `$feature`.
+Mode: `$mode` or `full`.
 
 ## Step 1 — Detect toolchain and layout
 
