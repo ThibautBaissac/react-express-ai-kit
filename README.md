@@ -60,15 +60,15 @@ Restart Claude Code (or start a new session) in the project so it picks up the r
 | --- | --- | --- |
 | `architecture.md` | *(always on)* | KISS/DRY/SRP/YAGNI, vertical slices, shared-layer placement, one-way layering, parse-don't-validate, "don't abstract until it earns it". |
 | `typescript.md` | `**/*.{ts,tsx}` | strict TS, no `any`, infer over annotate, discriminated unions, exhaustive switches. |
-| `backend-routes.md` | `**/routes/**`, `**/controllers/**`, `**/*.{route,routes,controller}.ts` | thin handlers: zod-parse → service → response; no logic/data access. |
-| `backend-services.md` | `**/services/**`, `**/*.service.ts` | business logic only; depends on a repository interface; no HTTP leakage. |
-| `backend-repositories.md` | `**/repositories/**`, `**/repository/**`, `**/*.repository.ts` | ORM-agnostic data-access boundary; returns domain types. |
+| `backend-routes.md` | `**/routes/**/*.ts`, `**/controllers/**/*.ts`, `**/*.route.ts`, `**/*.routes.ts`, `**/*.controller.ts` | thin handlers: zod-parse → service → response; no logic/data access. |
+| `backend-services.md` | `**/services/**/*.ts`, `**/*.service.ts` | business logic only; depends on a repository interface; no HTTP leakage. |
+| `backend-repositories.md` | `**/repositories/**/*.ts`, `**/repository/**/*.ts`, `**/*.repository.ts` | ORM-agnostic data-access boundary; returns domain types. |
 | `frontend-components.md` | `**/components/**/*.tsx`, `**/ui/**/*.tsx` | function components (no `React.FC`); presentational, composable. |
 | `frontend-forms.md` | `**/forms/**/*.tsx`, `**/*.form.tsx`, `**/*Form.tsx` | React Hook Form over the shared zod request contract; mutation-driven submission and accessible errors. |
-| `frontend-hooks.md` | `**/hooks/**`, `**/use*.{ts,tsx}` | custom hooks; TanStack Query owns server state. |
+| `frontend-hooks.md` | `**/hooks/**/*.{ts,tsx}`, `**/use*.{ts,tsx}` | custom hooks; TanStack Query owns server state. |
 | `frontend-routes.md` | `**/*.routes.tsx`, `**/router.tsx` | React Router v7 Data Mode route objects; feature-owned routes composed by one app router. |
-| `frontend-state.md` | `**/store/**`, `**/stores/**`, `**/*.store.ts` | Zustand for UI state only; no mirrored server data. |
-| `shared-contracts.md` | `**/contracts/**`, `**/schemas/**`, `**/*.schema.ts` | API/domain zod schemas as single source of truth; matched persistence/ORM schemas are classified and excluded. |
+| `frontend-state.md` | `**/store/**/*.ts`, `**/stores/**/*.ts`, `**/*.store.ts` | Zustand for UI state only; no mirrored server data. |
+| `shared-contracts.md` | `**/contracts/**/*.ts`, `**/schemas/**/*.ts`, `**/*.schema.ts` | API/domain zod schemas as single source of truth; matched persistence/ORM schemas are classified and excluded. |
 | `testing.md` | `**/*.{test,spec}.{ts,tsx}` | colocated, behavior-focused tests; mocked repos; user-centric RTL. |
 
 Globs use directory-name conventions, so they survive different layouts (`src/`, `src/server`+`src/client`, `apps/web`+`apps/api`, feature folders).

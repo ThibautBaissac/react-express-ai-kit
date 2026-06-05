@@ -14,7 +14,7 @@ Generate `$feature` as one cohesive slice matching the repo. Mode: `$mode` or `f
 ## Step 1 — Detect toolchain and layout
 
 ```bash
-bash "${CLAUDE_PROJECT_DIR}/.claude/lib/detect-toolchain.sh"
+source "${CLAUDE_PROJECT_DIR}/.claude/lib/detect-toolchain.sh"
 ```
 
 Inspect before creating files. Apply `references/layout-detection.md`. Match
