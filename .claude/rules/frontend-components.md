@@ -1,6 +1,7 @@
 ---
 paths:
   - "**/components/**/*.tsx"
+  - "**/ui/**/*.tsx"
 ---
 
 # React components — presentational and composable

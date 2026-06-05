@@ -62,11 +62,12 @@ Restart Claude Code (or start a new session) in the project so it picks up the r
 | `typescript.md` | `**/*.{ts,tsx}` | strict TS, no `any`, infer over annotate, discriminated unions, exhaustive switches. |
 | `backend-routes.md` | `**/routes/**`, `**/controllers/**`, `**/*.{route,routes,controller}.ts` | thin handlers: zod-parse → service → response; no logic/data access. |
 | `backend-services.md` | `**/services/**`, `**/*.service.ts` | business logic only; depends on a repository interface; no HTTP leakage. |
-| `backend-repositories.md` | `**/repositories/**`, `**/*.repository.ts` | ORM-agnostic data-access boundary; returns domain types. |
-| `frontend-components.md` | `**/components/**/*.tsx` | function components (no `React.FC`); presentational, composable. |
+| `backend-repositories.md` | `**/repositories/**`, `**/repository/**`, `**/*.repository.ts` | ORM-agnostic data-access boundary; returns domain types. |
+| `frontend-components.md` | `**/components/**/*.tsx`, `**/ui/**/*.tsx` | function components (no `React.FC`); presentational, composable. |
 | `frontend-forms.md` | `**/forms/**/*.tsx`, `**/*.form.tsx`, `**/*Form.tsx` | React Hook Form over the shared zod request contract; mutation-driven submission and accessible errors. |
 | `frontend-hooks.md` | `**/hooks/**`, `**/use*.{ts,tsx}` | custom hooks; TanStack Query owns server state. |
-| `frontend-state.md` | `**/store/**`, `**/*.store.ts` | Zustand for UI state only; no mirrored server data. |
+| `frontend-routes.md` | `**/*.routes.tsx`, `**/router.tsx` | React Router v7 Data Mode route objects; feature-owned routes composed by one app router. |
+| `frontend-state.md` | `**/store/**`, `**/stores/**`, `**/*.store.ts` | Zustand for UI state only; no mirrored server data. |
 | `shared-contracts.md` | `**/contracts/**`, `**/schemas/**`, `**/*.schema.ts` | API/domain zod schemas as single source of truth; matched persistence/ORM schemas are classified and excluded. |
 | `testing.md` | `**/*.{test,spec}.{ts,tsx}` | colocated, behavior-focused tests; mocked repos; user-centric RTL. |
 
@@ -78,6 +79,7 @@ Globs use directory-name conventions, so they survive different layouts (`src/`,
 | --- | --- | --- | --- |
 | `scaffold-feature` | `/scaffold-feature [name] [full\|api\|ui]` | sonnet | Generates a full vertical slice (FE/BE contract → backend layers → frontend layers → tests), wired to your detected layout. |
 | `add-api-contract` | `/add-api-contract [name]` | sonnet | Creates/extends a feature-owned-by-default FE/BE zod contract and wires BE validation + a typed FE call. |
+| `react-router` | `/react-router [route-or-feature-name]` | sonnet | Adds React Router v7 Data Mode routes in frontend feature slices, with zod-parsed URL state and TanStack Query prefetching. |
 | `write-tests` | `/write-tests [path]` | sonnet | Writes colocated tests to convention; auto-detects Vitest/Jest. |
 | `run-checks` | `/run-checks` | inherit | Quality gate: typecheck + lint + tests + build via the detected toolchain. |
 | `style-component` | `/style-component [target]` | sonnet | Styles UI with Tailwind v4 utilities and Headless UI primitives; sets up Tailwind if it's missing. |
