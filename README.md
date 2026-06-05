@@ -64,6 +64,7 @@ Restart Claude Code (or start a new session) in the project so it picks up the r
 | `backend-services.md` | `**/services/**`, `**/*.service.ts` | business logic only; depends on a repository interface; no HTTP leakage. |
 | `backend-repositories.md` | `**/repositories/**`, `**/*.repository.ts` | ORM-agnostic data-access boundary; returns domain types. |
 | `frontend-components.md` | `**/components/**/*.tsx` | function components (no `React.FC`); presentational, composable. |
+| `frontend-forms.md` | `**/forms/**/*.tsx`, `**/*.form.tsx`, `**/*Form.tsx` | React Hook Form over the shared zod request contract; mutation-driven submission and accessible errors. |
 | `frontend-hooks.md` | `**/hooks/**`, `**/use*.{ts,tsx}` | custom hooks; TanStack Query owns server state. |
 | `frontend-state.md` | `**/store/**`, `**/*.store.ts` | Zustand for UI state only; no mirrored server data. |
 | `shared-contracts.md` | `**/contracts/**`, `**/schemas/**`, `**/*.schema.ts` | API/domain zod schemas as single source of truth; matched persistence/ORM schemas are classified and excluded. |
@@ -80,6 +81,7 @@ Globs use directory-name conventions, so they survive different layouts (`src/`,
 | `write-tests` | `/write-tests [path]` | sonnet | Writes colocated tests to convention; auto-detects Vitest/Jest. |
 | `run-checks` | `/run-checks` | inherit | Quality gate: typecheck + lint + tests + build via the detected toolchain. |
 | `style-component` | `/style-component [target]` | sonnet | Styles UI with Tailwind v4 utilities and Headless UI primitives; sets up Tailwind if it's missing. |
+| `scaffold-form` | `/scaffold-form [name]` | sonnet | Builds a React Hook Form bound to the feature's zod request contract via `zodResolver`, submitting through a TanStack Query mutation with accessible, error-surfaced fields. |
 
 Meatier skills keep templates and patterns in a `references/` subdirectory that loads only when needed.
 
