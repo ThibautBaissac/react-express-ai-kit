@@ -28,25 +28,26 @@ Direct equivalents: `pnpm install`, `pnpm dev`, `pnpm test`.
 
 ## Where things live
 
-**Hybrid layout:** domain code in **feature slices**, cross-cutting infra in a **`shared/` layer**.
+**Single `src/` root, hybrid layout:** domain code in **feature slices**, cross-cutting infra in a **`shared/` layer**.
 
 ```
-features/<feature>/         # one slice owns its domain end to end
-  <feature>.schema.ts       # zod contract for this feature (FE + BE)
-  <feature>.routes.ts       # thin Express handlers
-  <feature>.service.ts      # business logic
-  <feature>.repository.ts   # data access (ORM-agnostic)
-  components/  hooks/  store/  <feature>.routes.tsx   # frontend slice
-  *.test.ts                 # colocated tests
+src/
+  features/<feature>/       # one slice owns its domain end to end
+    <feature>.schema.ts     # zod contract for this feature (FE + BE)
+    <feature>.routes.ts     # thin Express handlers
+    <feature>.service.ts    # business logic
+    <feature>.repository.ts # data access (ORM-agnostic)
+    components/  hooks/  store/  <feature>.routes.tsx # frontend slice
+    *.test.ts               # colocated tests
 
-shared/                     # cross-cutting infra only — never domain logic
-  ui/                       # generic, domain-free UI primitives
-  lib/                      # db/http client, logger, config
-  contracts/                # cross-feature zod contracts (FE + BE)
+  shared/                   # cross-cutting infra only — never domain logic
+    ui/                     # generic, domain-free UI primitives
+    lib/                    # db/http client, logger, config
+    contracts/              # cross-feature zod contracts (FE + BE)
 ```
 
 - Domain code always lives in a feature; `shared/` is for things generic by nature. See @.claude/rules/architecture.md.
-- Adjust the root to your layout (`src/`, `apps/web` + `apps/api`, etc.).
+- This project uses one root package with one `src/` tree. Keep React and Express entry points in `src/`, and add new domain code under `src/features`.
 - ORM: Drizzle, behind the repository interface.
 
 ## Rules that prevent mistakes
