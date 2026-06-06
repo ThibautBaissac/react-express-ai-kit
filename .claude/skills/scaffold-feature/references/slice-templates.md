@@ -18,7 +18,10 @@ export const InvoiceSchema = z.object({
 export type Invoice = z.infer<typeof InvoiceSchema>;
 
 // Derived request/response shapes; do not redeclare fields.
-export const CreateInvoiceBody = InvoiceSchema.pick({ customer: true, amountCents: true });
+export const CreateInvoiceBody = InvoiceSchema.pick({
+  customer: true,
+  amountCents: true,
+});
 export type CreateInvoiceBody = z.infer<typeof CreateInvoiceBody>;
 
 export const InvoiceListResponse = z.object({ items: z.array(InvoiceSchema) });
@@ -39,9 +42,15 @@ export interface InvoiceRepository {
 // Replace these bodies with the repo's ORM or driver, then parse rows with InvoiceSchema to guard drift.
 export function createInvoiceRepository(/* db */): InvoiceRepository {
   return {
-    async findById(_id) { throw new Error("not implemented"); },
-    async list() { throw new Error("not implemented"); },
-    async insert(_data) { throw new Error("not implemented"); },
+    async findById(_id) {
+      throw new Error("not implemented");
+    },
+    async list() {
+      throw new Error("not implemented");
+    },
+    async insert(_data) {
+      throw new Error("not implemented");
+    },
   };
 }
 ```
@@ -79,15 +88,20 @@ export function invoiceRoutes(service: InvoiceService): Router {
   const router = Router();
 
   router.get("/", async (_req, res, next) => {
-    try { res.json({ items: await service.list() }); }
-    catch (err) { next(err); }
+    try {
+      res.json({ items: await service.list() });
+    } catch (err) {
+      next(err);
+    }
   });
 
   router.post("/", async (req, res, next) => {
     try {
       const body = CreateInvoiceBody.parse(req.body);
       res.status(201).json(await service.create(body));
-    } catch (err) { next(err); }
+    } catch (err) {
+      next(err);
+    }
   });
 
   return router;
@@ -100,7 +114,7 @@ export function invoiceRoutes(service: InvoiceService): Router {
 ```ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { InvoiceListResponse, type CreateInvoiceBody } from "../invoice.schema";
-import { api } from "../../../lib/api"; // adapt to the project's existing client
+import { api } from "../../../shared/lib/api"; // adapt to the project's existing client
 
 const keys = { all: ["invoices"] as const };
 
@@ -114,7 +128,7 @@ export function useInvoices() {
 export function useCreateInvoice() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (body: CreateInvoiceBody) => api.post("/invoices", body),
+    mutationFn: (body: CreateInvoiceBody) => api.post("/invoices", { body }),
     onSuccess: () => qc.invalidateQueries({ queryKey: keys.all }),
   });
 }
@@ -148,7 +162,10 @@ export function InvoiceList({ invoices }: InvoiceListProps) {
     <table>
       <tbody>
         {invoices.map((inv) => (
-          <tr key={inv.id}><td>{inv.customer}</td><td>{inv.amountCents}</td></tr>
+          <tr key={inv.id}>
+            <td>{inv.customer}</td>
+            <td>{inv.amountCents}</td>
+          </tr>
         ))}
       </tbody>
     </table>
@@ -185,7 +202,9 @@ const invoice = {
   createdAt: "2026-01-01T00:00:00.000Z",
 };
 
-function makeRepo(overrides: Partial<InvoiceRepository> = {}): InvoiceRepository {
+function makeRepo(
+  overrides: Partial<InvoiceRepository> = {},
+): InvoiceRepository {
   return {
     findById: vi.fn(),
     list: vi.fn(),

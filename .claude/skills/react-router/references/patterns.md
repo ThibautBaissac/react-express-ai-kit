@@ -13,10 +13,7 @@ export const router = createBrowserRouter([
   {
     path: "/",
     Component: AppLayout, // renders <Outlet/>, nav, etc.
-    children: [
-      { index: true, Component: Home },
-      ...invoiceRoutes,
-    ],
+    children: [{ index: true, Component: Home }, ...invoiceRoutes],
   },
 ]);
 ```
@@ -41,7 +38,9 @@ import { Outlet, NavLink } from "react-router";
 export function AppLayout() {
   return (
     <>
-      <nav><NavLink to="/invoices">Invoices</NavLink></nav>
+      <nav>
+        <NavLink to="/invoices">Invoices</NavLink>
+      </nav>
       <Outlet />
     </>
   );
@@ -63,14 +62,16 @@ export const invoiceRoutes: RouteObject[] = [
       {
         index: true,
         lazy: async () => {
-          const { InvoiceList, listLoader } = await import("./components/InvoiceList");
+          const { InvoiceList, listLoader } =
+            await import("./components/InvoiceList");
           return { Component: InvoiceList, loader: listLoader };
         },
       },
       {
         path: ":invoiceId",
         lazy: async () => {
-          const { InvoiceDetail, detailLoader } = await import("./components/InvoiceDetail");
+          const { InvoiceDetail, detailLoader } =
+            await import("./components/InvoiceDetail");
           return { Component: InvoiceDetail, loader: detailLoader };
         },
       },
@@ -81,7 +82,7 @@ export const invoiceRoutes: RouteObject[] = [
 
 ## TanStack Query integration
 
-TanStack Query owns server state. Loaders only *warm the cache*. Components read
+TanStack Query owns server state. Loaders only _warm the cache_. Components read
 the same `useQuery` hook on direct and client navigation.
 
 ```tsx
@@ -89,11 +90,15 @@ the same `useQuery` hook on direct and client navigation.
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { invoiceQuery } from "../hooks/useInvoice"; // queryKey + queryFn factory
-import { queryClient } from "../../../app/queryClient";
+import { queryClient } from "../../../shared/lib/queryClient";
 import { InvoiceParams } from "../invoice.schema";
 
 // Prefetch into the shared client; do not return data as a parallel source of truth.
-export async function detailLoader({ params }: { params: Record<string, string | undefined> }) {
+export async function detailLoader({
+  params,
+}: {
+  params: Record<string, string | undefined>;
+}) {
   const { invoiceId } = InvoiceParams.parse(params);
   await queryClient.ensureQueryData(invoiceQuery(invoiceId));
   return null;
@@ -114,7 +119,8 @@ import { InvoiceResponse } from "../invoice.schema";
 export const invoiceQuery = (id: string) =>
   queryOptions({
     queryKey: ["invoices", id],
-    queryFn: async () => InvoiceResponse.parse(await api.get(`/invoices/${id}`)),
+    queryFn: async () =>
+      InvoiceResponse.parse(await api.get(`/invoices/${id}`)),
   });
 ```
 
@@ -125,8 +131,10 @@ route `action` only for non-Query flows or progressive-enhancement `<Form>`:
 import { redirect } from "react-router";
 
 export async function createInvoiceAction({ request }: { request: Request }) {
-  const body = CreateInvoiceBody.parse(Object.fromEntries(await request.formData()));
-  const created = InvoiceResponse.parse(await api.post("/invoices", body));
+  const body = CreateInvoiceBody.parse(
+    Object.fromEntries(await request.formData()),
+  );
+  const created = InvoiceResponse.parse(await api.post("/invoices", { body }));
   await queryClient.invalidateQueries({ queryKey: ["invoices"] });
   return redirect(`/invoices/${created.id}`);
 }
@@ -164,7 +172,11 @@ import { useNavigation } from "react-router";
 export function AppLayout() {
   const navigation = useNavigation();
   const busy = navigation.state !== "idle";
-  return <main aria-busy={busy}><Outlet /></main>;
+  return (
+    <main aria-busy={busy}>
+      <Outlet />
+    </main>
+  );
 }
 ```
 
@@ -173,7 +185,12 @@ import { useRouteError, isRouteErrorResponse } from "react-router";
 
 export function InvoiceError() {
   const error = useRouteError();
-  if (isRouteErrorResponse(error)) return <p>{error.status} — {error.statusText}</p>;
+  if (isRouteErrorResponse(error))
+    return (
+      <p>
+        {error.status} — {error.statusText}
+      </p>
+    );
   return <p>Something went wrong.</p>;
 }
 // attach via the route object: { path: ":invoiceId", Component, ErrorBoundary: InvoiceError }

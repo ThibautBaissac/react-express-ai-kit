@@ -1,15 +1,8 @@
-import express from "express";
 import { createServer } from "node:http";
+import { createApiApp } from "./apiApp";
 import { env } from "./shared/lib/env";
 
-const app = express();
-app.use(express.json());
-
-app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok" });
-});
-
-const server = createServer(app);
+const server = createServer(createApiApp());
 
 server.on("error", (error) => {
   console.error("API failed to start", error);

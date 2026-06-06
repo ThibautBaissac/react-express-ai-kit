@@ -133,9 +133,9 @@ PM="$(detect_pm "$WORKSPACE_ROOT")"
 TEST_RUNNER="$(detect_test_runner "$PROJECT_ROOT")"
 
 case "$PM" in
-  pnpm) PM_RUN="pnpm run"; PM_EXEC="pnpm exec";   PM_DLX="pnpm dlx" ;;
-  yarn) PM_RUN="yarn";     PM_EXEC="yarn exec";   PM_DLX="yarn dlx" ;;
-  *)    PM_RUN="npm run";  PM_EXEC="npx";         PM_DLX="npx" ;;
+  pnpm) PM_RUN="pnpm run"; PM_EXEC="pnpm exec"; PM_DLX="pnpm dlx" ;;
+  yarn) PM_RUN="yarn";     PM_EXEC="yarn exec"; PM_DLX="yarn dlx" ;;
+  *)    PM_RUN="npm run";  PM_EXEC="npx";       PM_DLX="npx" ;;
 esac
 
 export PROJECT_ROOT WORKSPACE_ROOT PM PM_RUN PM_EXEC PM_DLX TEST_RUNNER
@@ -145,7 +145,11 @@ export PROJECT_ROOT WORKSPACE_ROOT PM PM_RUN PM_EXEC PM_DLX TEST_RUNNER
 # pm_run <script> [args...] — run a package.json script with the detected PM.
 pm_run() {
   local script="$1"; shift || true
-  ( cd "$PROJECT_ROOT" && $PM_RUN "$script" "$@" )
+  case "$PM" in
+    pnpm) ( cd "$PROJECT_ROOT" && pnpm run "$script" "$@" ) ;;
+    yarn) ( cd "$PROJECT_ROOT" && yarn "$script" "$@" ) ;;
+    *)    ( cd "$PROJECT_ROOT" && npm run "$script" -- "$@" ) ;;
+  esac
 }
 
 # has_script <name> — 0 if package.json defines that script.
