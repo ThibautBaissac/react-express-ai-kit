@@ -19,6 +19,13 @@ yarn-error.log*
 *.pem
 *.key
 
+# Local database (SQLite via better-sqlite3) — Drizzle migrations in drizzle/ stay tracked
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+
 # OS
 .DS_Store
 Thumbs.db
