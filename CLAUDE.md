@@ -24,7 +24,7 @@ run_tests       # run the test suite
 run_build       # production build
 ```
 
-Direct equivalents (adjust to your package manager): `<pm> install`, `<pm> dev`, `<pm> test`.
+Direct equivalents: `pnpm install`, `pnpm dev`, `pnpm test`.
 
 ## Where things live
 
