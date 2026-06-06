@@ -47,7 +47,7 @@ shared/                     # cross-cutting infra only — never domain logic
 
 - Domain code always lives in a feature; `shared/` is for things generic by nature. See @.claude/rules/architecture.md.
 - Adjust the root to your layout (`src/`, `apps/web` + `apps/api`, etc.).
-- ORM: `<Prisma | Drizzle | Mongoose | … >`, behind the repository interface.
+- ORM: Drizzle, behind the repository interface.
 
 ## Rules that prevent mistakes
 
