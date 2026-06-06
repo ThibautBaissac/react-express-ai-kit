@@ -39,3 +39,6 @@ Thumbs.db
 # Test / coverage
 coverage/
 .nyc_output/
+
+# Local task workflow state (per-task completion latch written by scripts/)
+tasks/*.status.json
