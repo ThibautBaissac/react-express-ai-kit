@@ -1,5 +1,5 @@
 ---
-name: adversarial-planning-decomposition-review
+name: adversarial-specs-review
 description: Adversarially review a Claude-produced overall task decomposition before any per-task implementation planning begins.
 argument-hint: "[source-brief-file] [specs-file]"
 arguments: [brief, specs]
