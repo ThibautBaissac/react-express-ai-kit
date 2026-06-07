@@ -56,6 +56,77 @@ or an acceptance criterion in the plan:
 Where the brief is silent on a technical choice, follow the project's
 architecture conventions from `CLAUDE.md` / `.claude/rules/architecture.md`.
 
+## Repo sanity check — stay grounded, not detailed
+
+Inspect the repo just enough to avoid a plan that contradicts the project that
+will receive it. This step should improve task boundaries and sequencing; it
+does **not** replace the later `/plan N` command's detailed implementation
+planning.
+
+Check what exists, when present:
+
+- package manager and available scripts;
+- current `src/` layout and app/API/router entry points;
+- DB/schema/migration setup;
+- existing test runner and broad test style;
+- relevant architecture rules.
+
+Do not invent files, scripts, dependencies, or conventions silently. If a task
+will require a new dependency, script, env var, migration setup, or convention,
+mention that at the task level so `/plan N` can detail it later.
+
+## Coverage checklist
+
+Before finalizing the task sequence, verify that every item from the brief is
+represented as a task, acceptance criterion, or explicit out-of-scope note:
+
+- functional requirements and user flows;
+- imposed stack/tooling/storage constraints;
+- evaluation, grading, and debrief criteria;
+- security, privacy, authorization, and data-boundary requirements;
+- empty, loading, error, invalid-input, and unauthorized states where relevant;
+- README, documentation, or delivery requirements.
+
+## Risk and proof obligations
+
+For each high-risk or heavily graded requirement, name the task that proves it
+and the kind of proof expected at a coarse level:
+
+- unit test;
+- API/integration test;
+- component test;
+- manual browser check;
+- documentation.
+
+Keep this generic. The later `/plan N` command owns exact test files, browser
+steps, fixtures, and assertions. Here, the goal is to make sure risky behavior
+is assigned to the right task early enough that later tasks build on it.
+
+## Ambiguity and boundary audit
+
+Before writing the final plan, remove or explicitly contain ambiguity that would
+change task scope later.
+
+Check for:
+
+- **Unresolved implementation forks:** avoid "X or Y" in a task when the choice
+  affects schema, dependencies, tests, docs, or sequencing. Pick one reasonable
+  default, or ask the user if the tradeoff is genuinely important.
+- **Public vs private data shapes:** if a task introduces secrets, credentials,
+  tokens, internal IDs, payments, personal data, or sensitive state, require a
+  public response/DTO contract and an acceptance criterion that sensitive fields
+  are not returned.
+- **Cross-boundary ownership:** if data, tables, contracts, or types cross
+  feature boundaries, state the ownership decision explicitly and make sure it
+  does not violate the architecture rules. If an exception is needed, call it out
+  as a deliberate decision.
+- **New tooling and dependencies:** if the plan names a library, test style, CLI,
+  script, env var, or external tool not present in the repo, assign the task that
+  adds it. Otherwise phrase the proof generically.
+- **Metric and state definitions:** if the brief asks for totals, statuses,
+  counts, money, progress, permissions, or lifecycle states, define the primary
+  meaning clearly enough that later tasks cannot implement two different things.
+
 ## Hard constraints on this step
 
 - **Planning only:** no application code, no running the pipeline, no creating
@@ -111,3 +182,18 @@ decisions explicitly so they can be reviewed.>
 Ask the user clarifying questions ONLY for genuine forks with real tradeoffs
 that the brief leaves open. Otherwise make reasonable assumptions and record
 them in the plan. Keep the plan lean — every line should earn its place.
+
+Then review the draft for these failure modes and fix the plan before writing
+if any apply:
+
+- a brief requirement, constraint, grading criterion, or delivery item is
+  missing;
+- a task is too broad for one `plan → implementation → review → refinement`
+  pipeline run;
+- a security/privacy/data-boundary requirement is deferred so late that later
+  tasks would need to retrofit it;
+- core UI behavior is separated from verification until a late polish-only task;
+- the plan assumes repo files, scripts, dependencies, or conventions that do not
+  exist and are not explicitly created by a task;
+- feature ownership, shared-layer use, or cross-feature dependencies are unclear
+  enough to risk violating the project architecture.
