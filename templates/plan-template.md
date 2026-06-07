@@ -41,5 +41,6 @@
 
 ## Project Docs Update
 
-{{ Note any updates required to .ralphy/project.md (architecture, new patterns, new
-   files), or write "Not needed for this change." }}
+{{ Note any updates required to project docs or instructions (for example
+   CLAUDE.md, AGENTS.md, .claude/rules/*, or docs/*), or write
+   "Not needed for this change." }}

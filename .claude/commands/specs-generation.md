@@ -1,6 +1,6 @@
 ---
-name: planning-decomposition
-description: Break down the brief into a sequenced plan of independently-deliverable tasks, written to `tasks/tasks.md` following the provided structure.
+name: specs-generation
+description: Break down the brief into a sequenced plan of independently-deliverable tasks, written to `tasks/specs.md` following the provided structure.
 argument-hint: "[brief-file]"
 arguments: [brief]
 ---
@@ -134,7 +134,7 @@ Check for:
 
 ## Output
 
-Write the overall plan to **`tasks/tasks.md`** with this structure:
+Write the overall plan to **`tasks/specs.md`** with this structure:
 
 ```markdown
 # Overall plan — <test name>

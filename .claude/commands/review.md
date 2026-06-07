@@ -17,6 +17,8 @@ Read the task documentation at `tasks/task-$task.md` to understand:
 - The testing strategy defined
 - Items marked as completed ([x]) in the To-Do List
 
+Also read the matching `### Task $task` block in the **specs** at `tasks/specs.md`. The specs' **Acceptance criteria** and **Proof** for this task are the canonical bar this implementation must clear — review against them, not only the plan's To-Do items. If the task doc's plan drifted from the specs (missing an acceptance criterion, or proof the specs required), that gap is itself a finding. Also honor the specs' global Imposed constraints & grading criteria when judging the work.
+
 #### Early Return — Implementation Still In Progress
 After reading the task doc, check the To-Do List:
 - If **any** To-Do items are still unchecked (`[ ]`), **do NOT proceed to Step 2**. Instead:
@@ -124,6 +126,7 @@ Based on your findings from steps 2-4, determine if the feature is **READY**, **
 - All manual testing scenarios pass
 - No implementation issues found
 - ALL To-Do items (Implementation and Testing) are marked complete [x]
+- Every **Acceptance criterion** for this task in the specs (`tasks/specs.md`) is satisfied, and its required **Proof** exists
 
 **NEEDS_WORK** - Any of the following:
 - Any checked To-Do item failed verification in Step 2
@@ -207,6 +210,10 @@ The canonical task plan — also known as the specification for this task — is
 **At the start of this conversation, before answering the user's first message, you MUST read this file in full using the Read tool.** It contains the requirements, constraints, and prior decisions you need to do this work correctly. Do not skip this step even if the user's first message looks unrelated to the plan.
 
 When the user refers to the "task plan", "task doc", "task spec", "specifications", or asks you to read or update the task documentation, this is the file — read or edit it directly with the Read/Edit tool. Do NOT search for it elsewhere; the path above is authoritative.
+
+## Source Specs
+
+The task plan above is one task expanded from the **overall specs** at `tasks/specs.md`. Those specs are the upstream source of context: their `### Task $task — …` block (found via the `**Becomes:** tasks/task-$task.md` marker) defines this task's outcome, scope, acceptance criteria, and proof, and their global sections define the constraints, architecture decisions, and grading criteria all tasks share. When you need the *why* behind a requirement, or context the task doc omits, read the matching task block and the global sections of `tasks/specs.md`.
 
 ---
 

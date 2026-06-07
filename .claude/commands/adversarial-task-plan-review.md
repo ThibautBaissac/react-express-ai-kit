@@ -21,7 +21,7 @@ to fail later.
 
 This command is **review only**:
 - Do not edit application code.
-- Do not edit `tasks/tasks.md`.
+- Do not edit `tasks/specs.md`.
 - Do not edit `tasks/task-$task.md` unless the user explicitly asks for fixes.
 - Do not mark checklist items complete or incomplete.
 - Do not run migrations, builds, dev servers, or tests.
@@ -32,7 +32,7 @@ This command is **review only**:
 Read enough context to ground the review:
 
 1. `tasks/task-$task.md` in full. This is the generated task plan under review.
-2. `tasks/tasks.md` in full, including:
+2. `tasks/specs.md` in full, including:
    - global sections: Goal & scope, Imposed constraints & grading criteria,
      Architecture & key decisions, Risk & proof obligations, New tooling /
      dependencies;
@@ -59,20 +59,20 @@ paths and line numbers from the repo where possible.
 
 Check the generated task plan for these failure modes.
 
-### Upstream brief fidelity
+### Upstream specs fidelity
 
-- The plan expands the matching Task `$task` block from `tasks/tasks.md`; it
+- The plan expands the matching Task `$task` block from `tasks/specs.md`; it
   does not redefine the task.
 - Every acceptance criterion and proof obligation assigned to this task in
-  `tasks/tasks.md` appears in the Overview, Implementation Plan, Testing
+  `tasks/specs.md` appears in the Overview, Implementation Plan, Testing
   Strategy, or To-Do List.
-- Global constraints from `tasks/tasks.md` that affect this task are carried
+- Global constraints from `tasks/specs.md` that affect this task are carried
   through, including architecture decisions, graded criteria, security/privacy
   requirements, data definitions, and dependency ownership.
 - The plan honors declared dependencies. It may assume earlier task outcomes,
   but it must not re-plan them or silently depend on future tasks.
 - Scope boundaries are respected. Work assigned to another task is not pulled
-  into this plan unless the upstream brief explicitly permits it.
+  into this plan unless the upstream specs explicitly permit it.
 
 ### Template and pipeline fitness
 
@@ -116,8 +116,8 @@ Check the generated task plan for these failure modes.
   malformed payloads.
 - Public DTOs exclude sensitive/internal data such as password hashes, salts,
   session tokens, secrets, and internal-only fields.
-- Object ownership checks avoid existence leakage where the upstream brief
-  requires it.
+- Object ownership checks avoid existence leakage where the upstream specs
+  require it.
 
 ### Data, metrics, and UX semantics
 
@@ -125,7 +125,7 @@ Check the generated task plan for these failure modes.
 - Seed data and fixtures support the task's required happy paths, security
   proofs, and empty states.
 - Metrics, ordering, totals, counts, status/lifecycle values, and date formats
-  are defined consistently with `tasks/tasks.md`.
+  are defined consistently with `tasks/specs.md`.
 - UI plans include loading, error, empty, invalid, and responsive states when
   the task has frontend scope.
 - Browser/manual checks are detailed enough to reproduce the required UX proof
@@ -144,7 +144,7 @@ Check the generated task plan for these failure modes.
 - Test isolation is explicit where DB, cookies, sessions, timers, Query clients,
   router instances, or browser servers are involved.
 - The Testing To-Do items include all mandatory proof from the Testing Strategy.
-- The plan does not defer proof to a later task unless `tasks/tasks.md`
+- The plan does not defer proof to a later task unless `tasks/specs.md`
   explicitly assigned that proof later.
 
 ## Output format
@@ -165,7 +165,7 @@ If there are no findings, say: "No blocking findings."
 State one of:
 - **Proceed to `/implementation N`**: no blocking issues remain.
 - **Revise `tasks/task-N.md` first**: list the specific changes needed.
-- **Ask a clarification first**: only for a genuine fork the repo/brief cannot
+- **Ask a clarification first**: only for a genuine fork the repo/specs cannot
   resolve safely.
 
 ## Optional Improvements

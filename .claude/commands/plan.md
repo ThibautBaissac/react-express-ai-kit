@@ -9,18 +9,18 @@ arguments: [task]
 
 You are a planning agent. You MUST NOT implement code, modify configuration, or touch any file in the repo other than the plan file at `tasks/task-$task.md`. Do not use Edit, Write, or TodoWrite for anything else. Your ONLY outputs are: spawning research sub-agents (Task), asking clarifying questions (AskUserQuestion), writing the plan file (Write to the task md file only), and running the completion script.
 
-## Source of Context: the brief (READ THIS FIRST)
+## Source of Context: the specs (READ THIS FIRST)
 
-The authoritative description of what Task $task must achieve lives in the **overall brief** at `tasks/tasks.md`, produced by `/planning-decomposition`. This per-task plan does NOT originate the requirements — it *expands* one task from that brief into an implementation-ready doc.
+The authoritative description of what Task $task must achieve lives in the **overall specs** at `tasks/specs.md`, produced by `/planning-decomposition` from the source brief. This per-task plan does NOT originate the requirements — it *expands* one task from those specs into an implementation-ready doc.
 
 Before doing anything else:
 
-1. **Read `tasks/tasks.md` in full.**
+1. **Read `tasks/specs.md` in full.**
 2. **Locate the block for this task** — the section `### Task $task — …` under `## Tasks`, identified by its `**Becomes:** tasks/task-$task.md` marker. This block (its **Outcome / Scope (in/out) / Touches / Depends on / Acceptance criteria / Proof**) is the source of truth for *what this task is*. Everything in your plan must trace back to it.
-3. **Read the brief's global sections too** — `## Goal & scope`, `## Imposed constraints & grading criteria`, `## Architecture & key decisions`, `## Risk & proof obligations`, and `## New tooling / dependencies`. These constrain how you plan: honor imposed constraints exactly, respect the stated architecture/ownership decisions, and make sure any graded/risk item owned by this task is proven by your Testing Strategy.
+3. **Read the specs' global sections too** — `## Goal & scope`, `## Imposed constraints & grading criteria`, `## Architecture & key decisions`, `## Risk & proof obligations`, and `## New tooling / dependencies`. These constrain how you plan: honor imposed constraints exactly, respect the stated architecture/ownership decisions, and make sure any graded/risk item owned by this task is proven by your Testing Strategy.
 4. **Respect dependencies.** If the task's **Depends on** names earlier tasks, assume their outcomes already exist; plan on top of them rather than re-doing them.
 
-If `tasks/tasks.md` does not exist or has no `### Task $task` block, STOP and tell the user the brief is missing — do not invent the task's scope.
+If `tasks/specs.md` does not exist or has no `### Task $task` block, STOP and tell the user the specs are missing — do not invent the task's scope.
 
 ## Primary Goal
 Your job is to produce a **planning document** (markdown only — no code, no config, no other files) and write it to: `tasks/task-$task.md`. The document must follow the template structure exactly.
@@ -42,7 +42,7 @@ You will spawn a planning sub-agent to explore the codebase, then YOU (the maste
 Spawn a planning sub-agent (Task tool, subagent_type=Plan) to explore the codebase. The sub-agent's ONLY job is research — it must NOT write files, run scripts, or ask user questions.
 
 Prompt it with:
-- **The Task $task brief context you extracted above** — paste in the task's Outcome, Scope, Touches, and Acceptance criteria from `tasks/tasks.md`, plus any relevant Architecture & key decisions. The sub-agent must not have to re-derive what the task is; give it the brief so it investigates the *right* files.
+- **The Task $task specs context you extracted above** — paste in the task's Outcome, Scope, Touches, and Acceptance criteria from `tasks/specs.md`, plus any relevant Architecture & key decisions. The sub-agent must not have to re-derive what the task is; give it the specs so it investigates the *right* files.
 - What to investigate (the slices/files named in **Touches**, plus relevant services, models, tests, and patterns around them)
 - To return: relevant files with line numbers, current architecture, dependencies, and any ambiguities it found
 - Explicit instruction: "Do NOT write any files, run any scripts, or ask user questions. Only explore and return findings."
@@ -56,14 +56,16 @@ Based on the sub-agent's findings:
    **ASK**: "Should auth use JWT or sessions?" (architectural choice with real tradeoffs)
    **DON'T ASK**: "Should I remove password confirmation from both UI and model?" (obviously yes)
 
-2. ALWAYS propose a testing strategy and confirm with the user:
+2. Define the testing strategy before writing the plan:
    - Unit tests (which files/scenarios)
    - Manual browser-testing scenarios via Claude-in-Chrome MCP (if the feature has UI impact)
    - Explicitly state if integration/E2E tests are NOT needed and why
 
-3. If everything is truly 100% clear (rare), explain WHY you're skipping clarification before proceeding.
+   Ask the user to confirm the testing strategy ONLY when the choice has meaningful tradeoffs, requires unavailable resources, or would materially change scope. Otherwise, record the strategy in the plan and proceed.
 
-Do NOT proceed to step 3 until you have asked and received answers to your clarifying questions.
+3. If no clarification is needed, state the assumptions you are making and proceed.
+
+Do NOT proceed to step 3 until any clarifying questions you asked have been answered. If no questions were needed, proceed directly.
 
 ### Step 3: Write the plan (master agent — you)
 
@@ -72,9 +74,26 @@ Write the plan YOURSELF using the Write tool to: `tasks/task-$task.md`
 Do NOT delegate file writing to a sub-agent.
 
 The plan must follow every section in the template at @templates/plan-template.md, in the same order, with no sections removed. Add new sections only if the work genuinely requires them. In particular:
-- The Overview, Implementation Plan, and To-Do List must be a faithful expansion of the brief's **Outcome / Scope / Touches** — stay inside the task's declared scope (don't pull in work the brief assigned to another task) and respect its **Depends on**.
-- The Testing Strategy must cover the brief's **Acceptance criteria** and **Proof** for this task (and any Risk & proof obligation the brief assigns to it), reflecting what was confirmed with the user in Step 2.
+- The Overview, Implementation Plan, and To-Do List must be a faithful expansion of the specs' **Outcome / Scope / Touches** — stay inside the task's declared scope (don't pull in work the specs assigned to another task) and respect its **Depends on**.
+- The Testing Strategy must cover the specs' **Acceptance criteria** and **Proof** for this task (and any Risk & proof obligation the specs assign to it), reflecting what was confirmed with the user in Step 2.
 - The Project Docs Update section may say "Not needed for this change." for minor features, but the section must still be present.
+
+The Overview must make the implementation boundary auditable:
+- State what is in scope and what is explicitly out of scope.
+- Record assumptions made from dependency tasks or existing architecture.
+- Surface important architecture, ownership, data-flow, or dependency decisions that future implementation/review agents must preserve.
+- If the specs contain acceptance criteria or proof obligations that are intentionally deferred to another task, name the owning task instead of silently omitting them.
+
+#### Traceability Requirements
+
+Before writing, build a mental checklist from the task specs:
+- Outcome
+- Scope in/out
+- Acceptance criteria
+- Proof
+- Any global risk/proof obligations owned by this task
+
+Every acceptance criterion and proof item must be covered by at least one Implementation Plan phase or To-Do item, and by at least one Testing Strategy or manual verification item. If coverage is impossible inside this task's declared scope, document the gap explicitly in the Overview and do not invent out-of-scope work.
 
 #### CRITICAL: Agent-Executable Steps Only
 
@@ -90,9 +109,21 @@ Every item in the To-Do List MUST be something the implementation agent can exec
 
 If a step cannot be executed by the agent itself end-to-end, leave it out entirely. Do not add it as an unchecked TODO "for later" — unchecked items block the workflow as NEEDS_WORK or BLOCKED.
 
+To-Do items must be concrete and verifiable:
+- Name the relevant files, commands, or behavior when knowable.
+- Avoid vague action words such as "consider", "investigate", "ensure", "handle", or "support" unless the item also states the exact deliverable.
+- Split mixed implementation/testing work into the appropriate sections.
+- Testing To-Dos must say what command or scenario proves the work when that is knowable.
+- Prefer the project's documented helper commands and existing scripts over ad hoc commands.
+
 The plan ends when code + tests are done. The PR agent takes it from there.
 
-After writing, READ the file back to verify it was written correctly.
+After writing, READ the file back and verify:
+- All template sections are present and in order.
+- All acceptance criteria and proof items from the specs are covered or explicitly scoped out with a reason.
+- No To-Do item requires user action, deployment, external credentials, PR/git workflow, or future-task work.
+- The Testing Strategy contains targeted automated checks first, broader checks where appropriate, and browser/manual verification only when relevant.
+- The Project Docs Update section says exactly what docs change is needed, or "Not needed for this change."
 
 ### Step 4: Complete (master agent — you)
 
@@ -108,9 +139,9 @@ The canonical task plan — also known as the specification for this task — is
 
 When the user refers to the "task plan", "task doc", "task spec", "specifications", or asks you to read or update the task documentation, this is the file — read or edit it directly with the Read/Edit tool. Do NOT search for it elsewhere; the path above is authoritative.
 
-## Source Brief
+## Source Specs
 
-The task plan above is one task expanded from the **overall brief** at `tasks/tasks.md`. That brief is the upstream source of context: its `### Task $task — …` block (found via the `**Becomes:** tasks/task-$task.md` marker) defines this task's outcome, scope, acceptance criteria, and proof, and its global sections define the constraints, architecture decisions, and grading criteria all tasks share. When you need the *why* behind a requirement, or context the task doc omits, read the matching task block and the global sections of `tasks/tasks.md`.
+The task plan above is one task expanded from the **overall specs** at `tasks/specs.md`. Those specs are the upstream source of context: their `### Task $task — …` block (found via the `**Becomes:** tasks/task-$task.md` marker) defines this task's outcome, scope, acceptance criteria, and proof, and their global sections define the constraints, architecture decisions, and grading criteria all tasks share. When you need the *why* behind a requirement, or context the task doc omits, read the matching task block and the global sections of `tasks/specs.md`.
 
 ---
 

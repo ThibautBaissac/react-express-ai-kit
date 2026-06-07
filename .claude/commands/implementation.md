@@ -9,17 +9,49 @@ arguments: [task]
 
 Read the task documentation at `tasks/task-$task.md` and implement the unchecked items from the To-Do List.
 
+The task doc is an expansion of one task from the overall specs at `tasks/specs.md`. The doc is your primary instruction set, and the specs are the upstream source of acceptance criteria and proof obligations. Implement against both: if the task doc and specs conflict, prefer the specs' declared Outcome / Scope / Acceptance criteria / Proof, keep the smallest change that satisfies this task, and update the task doc to reflect the correction.
+
+Stay strictly inside this task's declared scope — do not implement work the specs assigned to other tasks. If a small enabling change is required to complete this task, keep it minimal and document why in the task doc.
+
 ## Instructions
-1. Read the task documentation file
-2. Check if a "Review Findings" section exists
+1. Read the task documentation file in full.
+2. Read the matching `### Task $task` block in `tasks/specs.md`, plus any global sections needed to understand architecture, imposed constraints, acceptance criteria, and proof obligations.
+3. Check the current worktree status before editing. Do not revert, overwrite, or clean up unrelated user changes.
+4. Read the files named by the plan, plus nearby code needed to follow existing patterns.
+5. Check if a "Review Findings" section exists
    - If it does, pay special attention to documented issues
    - Address any issues from the previous review first
-3. Find the To-Do List section and implement unchecked items following the plan
-4. Mark each item as completed ([x]) when done
-5. Do NOT ask any questions - proceed directly with implementation
+6. Find the To-Do List section and implement unchecked items following the plan.
+7. Verify the implementation against the specs' Acceptance criteria and Proof, not only against the To-Do List.
+8. Mark each item as completed ([x]) only after the code/docs/tests for that item are done and the relevant verification has passed or the failure is documented in the task doc.
+9. Do NOT ask questions unless implementation is impossible without user input, external credentials, or a decision that would materially change scope. Make reasonable assumptions and proceed for everything else.
+
+## Implementation Guardrails
+
+- Preserve the architecture and ownership boundaries in the task doc, the specs, and project instructions.
+- Prefer existing project patterns, helper APIs, and scripts over introducing new abstractions.
+- Do not add future-task behavior, opportunistic refactors, deployment steps, PR/git workflow, or user-gated TODOs.
+- If the plan missed a specs acceptance criterion that belongs to this task, implement it and update the task doc so review agents can see why.
+- If a To-Do item is already satisfied by existing code, verify it, then mark it complete with any necessary note in the task doc.
+- If a planned item is no longer valid because the codebase changed, make the smallest correct adjustment and document the reason in the task doc.
+
+## Verification
+
+Run checks in a risk-scaled order:
+1. Targeted tests or commands for the files/behavior changed.
+2. Manual/browser verification from the task plan when the feature has UI or HTTP behavior.
+3. Broader project checks required by the task plan or project instructions, such as typecheck, lint, build, or full tests.
+
+Use the project's documented helper commands when available. If a required check cannot be run, record the reason in the task doc and include it in your final response.
 
 ## Workflow Completion
 After implementing, check if ALL To-Do items (both Implementation and Testing sections) are now marked as complete [x].
+
+Before final response, summarize:
+- Files changed.
+- To-Do items completed.
+- Tests/checks/manual verification run and their results.
+- Any skipped verification, scope correction, or task doc update.
 
 Start implementing now.
 
@@ -32,6 +64,10 @@ The canonical task plan — also known as the specification for this task — is
 **At the start of this conversation, before answering the user's first message, you MUST read this file in full using the Read tool.** It contains the requirements, constraints, and prior decisions you need to do this work correctly. Do not skip this step even if the user's first message looks unrelated to the plan.
 
 When the user refers to the "task plan", "task doc", "task spec", "specifications", or asks you to read or update the task documentation, this is the file — read or edit it directly with the Read/Edit tool. Do NOT search for it elsewhere; the path above is authoritative.
+
+## Source Specs
+
+The task plan above is one task expanded from the **overall specs** at `tasks/specs.md`. Those specs are the upstream source of context: their `### Task $task — …` block (found via the `**Becomes:** tasks/task-$task.md` marker) defines this task's outcome, scope, acceptance criteria, and proof, and their global sections define the constraints, architecture decisions, and grading criteria all tasks share. When you need the *why* behind a requirement, or context the task doc omits, read the matching task block and the global sections of `tasks/specs.md`.
 
 ---
 

@@ -11,6 +11,7 @@ You are a refinement agent. Your job is to improve the code through two parallel
 
 ## Context
 - Task Documentation: `tasks/task-$task.md`
+- Overall specs (source of context): `tasks/specs.md` — the `### Task $task` block plus the global Architecture & key decisions / Imposed constraints sections define the conventions this task's code must follow. Simplifications must not violate them (e.g. don't collapse a deliberate slice boundary or ownership decision the specs made).
 - Task ID: $task
 
 ## Step 1: Spawn Both Sub-tasks in Parallel
@@ -33,7 +34,7 @@ You are a code simplification agent. Your job is to review recently modified cod
    - Improve code organization
 4. Apply fixes directly to the code
 5. Ensure all functionality is preserved — do NOT change behavior
-6. Follow project standards from CLAUDE.md
+6. Follow project standards from CLAUDE.md and the architecture/ownership decisions recorded in the specs at `tasks/specs.md` (their `## Architecture & key decisions` and `### Task $task` block) — do not simplify in a way that breaks a deliberate boundary the specs established
 
 ## Constraints
 - Only modify files that were changed in this branch
@@ -116,6 +117,10 @@ The canonical task plan — also known as the specification for this task — is
 **At the start of this conversation, before answering the user's first message, you MUST read this file in full using the Read tool.** It contains the requirements, constraints, and prior decisions you need to do this work correctly. Do not skip this step even if the user's first message looks unrelated to the plan.
 
 When the user refers to the "task plan", "task doc", "task spec", "specifications", or asks you to read or update the task documentation, this is the file — read or edit it directly with the Read/Edit tool. Do NOT search for it elsewhere; the path above is authoritative.
+
+## Source Specs
+
+The task plan above is one task expanded from the **overall specs** at `tasks/specs.md`. Those specs are the upstream source of context: their `### Task $task — …` block (found via the `**Becomes:** tasks/task-$task.md` marker) defines this task's outcome, scope, acceptance criteria, and proof, and their global sections define the constraints, architecture decisions, and grading criteria all tasks share. When you need the *why* behind a requirement, or context the task doc omits, read the matching task block and the global sections of `tasks/specs.md`.
 
 ---
 

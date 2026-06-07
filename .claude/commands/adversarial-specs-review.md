@@ -1,17 +1,17 @@
 ---
 name: adversarial-planning-decomposition-review
 description: Adversarially review a Claude-produced overall task decomposition before any per-task implementation planning begins.
-argument-hint: "[brief-file] [tasks-file]"
-arguments: [brief, tasks]
+argument-hint: "[source-brief-file] [specs-file]"
+arguments: [brief, specs]
 ---
 
-You are an adversarial planning reviewer. Your job is to review an overall
-decomposition plan, usually `tasks/tasks.md`, before the user starts the
+You are an adversarial planning reviewer. Your job is to review the generated
+overall specs, usually `tasks/specs.md`, before the user starts the
 per-task `/plan N` pipeline.
 
 Default inputs:
-- Brief: `$brief`, or `docs/*.md` if one obvious candidate exists.
-- Task decomposition: `$tasks`, or `tasks/tasks.md`.
+- Source brief: `$brief`, or `docs/*.md` if one obvious candidate exists.
+- Overall specs: `$specs`, or `tasks/specs.md`.
 
 ## Review stance
 
@@ -21,7 +21,7 @@ of the plan, not a review of implementation code.
 
 This command is **review only**:
 - Do not edit application code.
-- Do not edit `tasks/tasks.md` unless the user explicitly asks for fixes.
+- Do not edit `tasks/specs.md` unless the user explicitly asks for fixes.
 - Do not create `tasks/task-N.md`.
 - Do not run migrations, builds, dev servers, or tests.
 
@@ -29,9 +29,9 @@ This command is **review only**:
 
 Read enough context to ground the review:
 
-1. The brief file. This is the source of truth for requirements, constraints,
-   grading criteria, and delivery expectations.
-2. The decomposition file, usually `tasks/tasks.md`.
+1. The source brief file. This is the source of truth for requirements,
+   constraints, grading criteria, and delivery expectations.
+2. The generated overall specs, usually `tasks/specs.md`.
 3. `.claude/commands/planning-decomposition.md`, because the plan should satisfy
    that command's own quality bar.
 4. `.claude/commands/plan.md` and `templates/plan-template.md`, because each
@@ -122,7 +122,7 @@ If there are no findings, say: "No blocking findings."
 
 State one of:
 - **Proceed to `/plan 1`**: no blocking issues remain.
-- **Revise `tasks/tasks.md` first**: list the specific changes needed.
+- **Revise `tasks/specs.md` first**: list the specific changes needed.
 - **Ask a clarification first**: only for a genuine fork the repo/brief cannot
   resolve safely.
 
