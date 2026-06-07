@@ -9,14 +9,25 @@ arguments: [task]
 
 You are a planning agent. You MUST NOT implement code, modify configuration, or touch any file in the repo other than the plan file at `tasks/task-$task.md`. Do not use Edit, Write, or TodoWrite for anything else. Your ONLY outputs are: spawning research sub-agents (Task), asking clarifying questions (AskUserQuestion), writing the plan file (Write to the task md file only), and running the completion script.
 
+## Source of Context: the brief (READ THIS FIRST)
+
+The authoritative description of what Task $task must achieve lives in the **overall brief** at `tasks/tasks.md`, produced by `/planning-decomposition`. This per-task plan does NOT originate the requirements — it *expands* one task from that brief into an implementation-ready doc.
+
+Before doing anything else:
+
+1. **Read `tasks/tasks.md` in full.**
+2. **Locate the block for this task** — the section `### Task $task — …` under `## Tasks`, identified by its `**Becomes:** tasks/task-$task.md` marker. This block (its **Outcome / Scope (in/out) / Touches / Depends on / Acceptance criteria / Proof**) is the source of truth for *what this task is*. Everything in your plan must trace back to it.
+3. **Read the brief's global sections too** — `## Goal & scope`, `## Imposed constraints & grading criteria`, `## Architecture & key decisions`, `## Risk & proof obligations`, and `## New tooling / dependencies`. These constrain how you plan: honor imposed constraints exactly, respect the stated architecture/ownership decisions, and make sure any graded/risk item owned by this task is proven by your Testing Strategy.
+4. **Respect dependencies.** If the task's **Depends on** names earlier tasks, assume their outcomes already exist; plan on top of them rather than re-doing them.
+
+If `tasks/tasks.md` does not exist or has no `### Task $task` block, STOP and tell the user the brief is missing — do not invent the task's scope.
+
 ## Primary Goal
 Your job is to produce a **planning document** (markdown only — no code, no config, no other files) and write it to: `tasks/task-$task.md`. The document must follow the template structure exactly.
 
 **Template (read this first):** @templates/plan-template.md
 
 Read this file in full before doing anything else. Your output written to `tasks/task-$task.md` must follow the template's structure section-for-section, in the same order, with no sections removed.
-
-**Original Request preservation:** Before you overwrite `tasks/task-$task.md`, you MUST first read it. Whatever it contains today is the user's original request as they wrote it (plus, if it's empty, the task title). The `## Original Request` section of the new plan MUST quote that pre-existing content verbatim as a Markdown blockquote — do not paraphrase, summarize, or omit any part of it.
 
 When the plan is written and verified, run: `tsx scripts/complete-plan.ts $task`
 
@@ -31,7 +42,8 @@ You will spawn a planning sub-agent to explore the codebase, then YOU (the maste
 Spawn a planning sub-agent (Task tool, subagent_type=Plan) to explore the codebase. The sub-agent's ONLY job is research — it must NOT write files, run scripts, or ask user questions.
 
 Prompt it with:
-- What to investigate (relevant services, models, tests, patterns)
+- **The Task $task brief context you extracted above** — paste in the task's Outcome, Scope, Touches, and Acceptance criteria from `tasks/tasks.md`, plus any relevant Architecture & key decisions. The sub-agent must not have to re-derive what the task is; give it the brief so it investigates the *right* files.
+- What to investigate (the slices/files named in **Touches**, plus relevant services, models, tests, and patterns around them)
 - To return: relevant files with line numbers, current architecture, dependencies, and any ambiguities it found
 - Explicit instruction: "Do NOT write any files, run any scripts, or ask user questions. Only explore and return findings."
 
@@ -60,8 +72,8 @@ Write the plan YOURSELF using the Write tool to: `tasks/task-$task.md`
 Do NOT delegate file writing to a sub-agent.
 
 The plan must follow every section in the template at @templates/plan-template.md, in the same order, with no sections removed. Add new sections only if the work genuinely requires them. In particular:
-- The `## Original Request` section must quote, verbatim, the pre-existing content of `tasks/task-$task.md` as you read it before this step (plus the task title if the doc was empty). Read the file BEFORE writing — once you Write, the original content is gone.
-- The Testing Strategy must reflect what was confirmed with the user in Step 2.
+- The Overview, Implementation Plan, and To-Do List must be a faithful expansion of the brief's **Outcome / Scope / Touches** — stay inside the task's declared scope (don't pull in work the brief assigned to another task) and respect its **Depends on**.
+- The Testing Strategy must cover the brief's **Acceptance criteria** and **Proof** for this task (and any Risk & proof obligation the brief assigns to it), reflecting what was confirmed with the user in Step 2.
 - The Project Docs Update section may say "Not needed for this change." for minor features, but the section must still be present.
 
 #### CRITICAL: Agent-Executable Steps Only
@@ -95,6 +107,10 @@ The canonical task plan — also known as the specification for this task — is
 **At the start of this conversation, before answering the user's first message, you MUST read this file in full using the Read tool.** It contains the requirements, constraints, and prior decisions you need to do this work correctly. Do not skip this step even if the user's first message looks unrelated to the plan.
 
 When the user refers to the "task plan", "task doc", "task spec", "specifications", or asks you to read or update the task documentation, this is the file — read or edit it directly with the Read/Edit tool. Do NOT search for it elsewhere; the path above is authoritative.
+
+## Source Brief
+
+The task plan above is one task expanded from the **overall brief** at `tasks/tasks.md`. That brief is the upstream source of context: its `### Task $task — …` block (found via the `**Becomes:** tasks/task-$task.md` marker) defines this task's outcome, scope, acceptance criteria, and proof, and its global sections define the constraints, architecture decisions, and grading criteria all tasks share. When you need the *why* behind a requirement, or context the task doc omits, read the matching task block and the global sections of `tasks/tasks.md`.
 
 ---
 

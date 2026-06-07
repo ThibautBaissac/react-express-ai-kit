@@ -1,16 +1,5 @@
 # Task {{ task title — replace with the real task title }}
 
-## Original Request
-
-<!--
-Quote the user's original request verbatim, as a Markdown blockquote. The source is the
-EXISTING content of the task doc at {{taskDocPath}} as you read it BEFORE rewriting it
-(plus the task title, if the doc is empty or only contains the title). Do not paraphrase,
-summarize, or omit any part of it. This section is mandatory.
--->
-
-> {{ original task doc content, quoted line-by-line }}
-
 ## Overview
 
 {{ Problem statement, scope, and any key architectural decisions you made.
