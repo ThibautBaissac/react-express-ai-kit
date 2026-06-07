@@ -40,6 +40,7 @@ Stay strictly inside this task's declared scope — do not implement work the sp
 Run checks in a risk-scaled order:
 1. Targeted tests or commands for the files/behavior changed.
 2. Manual/browser verification from the task plan when the feature has UI or HTTP behavior.
+   - **Multi-step CLI checks** (e.g. `db:migrate` → `db:seed` → re-run for idempotency): record the terminal output (counts, success messages) as a one-line snippet next to the completed checklist item, so reviewers can verify it without re-running the sequence.
 3. Broader project checks required by the task plan or project instructions, such as typecheck, lint, build, or full tests.
 
 Use the project's documented helper commands when available. If a required check cannot be run, record the reason in the task doc and include it in your final response.

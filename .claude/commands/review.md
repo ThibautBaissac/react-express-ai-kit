@@ -82,6 +82,8 @@ Run the project's unit tests:
 ### 4. Manual Testing with Claude-in-Chrome MCP
 Follow the manual testing scenarios from the Testing Strategy section.
 
+**CLI-only tasks (no browser):** If the Testing Strategy specifies command-line checks instead of browser scenarios (e.g. `db:migrate` → `db:seed`), run all steps in a **single chained Bash invocation** using `&&` so state is never lost between commands. Example: `DATABASE_URL=$TMPDB pnpm db:migrate && DATABASE_URL=$TMPDB pnpm db:seed && DATABASE_URL=$TMPDB pnpm db:seed`. Never delete or overwrite a file produced by one step before the next step consumes it.
+
 **CRITICAL: Server Isolation Rules**
 - Your task-specific port is in the Testing Configuration section of your system prompt
 - **NEVER reuse an existing server** - always start your own
