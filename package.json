@@ -23,8 +23,10 @@
     "format": "prettier --write",
     "test": "vitest run",
     "test:watch": "vitest",
+    "ci": "pnpm typecheck && pnpm lint && pnpm test && pnpm build",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx scripts/seed.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {

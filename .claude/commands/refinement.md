@@ -106,7 +106,7 @@ Log a brief summary of all changes made:
 - Do NOT modify task documentation at `tasks/task-$task.md`
 - Do NOT run completion scripts
 - Do NOT ask questions — proceed autonomously
-- Do NOT run tests — the PR agent will handle CI
+- Do NOT run tests — the CI-gate agent will handle CI
 
 [System]
 ## Task Plan File
