@@ -40,5 +40,11 @@ Thumbs.db
 coverage/
 .nyc_output/
 
+# Playwright e2e (browser binaries cached globally; these are run artifacts)
+playwright-report/
+test-results/
+e2e/screenshots/
+/playwright/.cache/
+
 # Local task workflow state (per-task completion latch written by scripts/)
 tasks/*.status.json

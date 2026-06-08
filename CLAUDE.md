@@ -26,6 +26,12 @@ run_build       # production build
 
 Direct equivalents: `pnpm install`, `pnpm dev`, `pnpm test`.
 
+Browser e2e runs through **Playwright** (`pnpm e2e`) — committed specs in `e2e/`,
+vendor-neutral (no model-specific browser tool). Playwright's `webServer` migrates +
+seeds an isolated `./e2e.db` and starts/stops the API + web server itself; don't run
+dev servers by hand for e2e. `e2e/responsive.spec.ts` writes 375px/1440px screenshots
+to `e2e/screenshots/` for visual review. `pnpm e2e:report` opens the last HTML report.
+
 ## Where things live
 
 **Single `src/` root, hybrid layout:** domain code in **feature slices**, cross-cutting infra in a **`shared/` layer**.

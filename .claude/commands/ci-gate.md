@@ -93,13 +93,12 @@ The task plan above is one task expanded from the **overall specs** at `tasks/sp
 ## Testing Configuration
 
 - **Task ID:** $task
-- **Dev Server Port:** compute as `3100 + $task` (e.g. task `1` → `3101`, task `2` → `3102`)
+- **Browser checks run through Playwright** (`pnpm e2e`)
 
-When running Claude-in-Chrome MCP tests, start the dev server on your assigned port (`3100 + $task`):
-1. Start the web (Vite) dev server on your assigned port — the browser hits this: `pnpm dev:web --port <port>`
-2. Start the Express API in parallel (default port 3000, which Vite proxies `/api` to): `pnpm dev:api`
-3. Drive the browser (via Claude-in-Chrome MCP) against `http://localhost:<port>`
-4. Stop the web server when testing is complete: `lsof -ti:<port> | xargs kill -9 2>/dev/null || true` (also stop the API on :3000 if you started it)
+Browser / visual verification:
+1. **Functional flows** (navigation, forms, auth, redirects, 404s): add or extend asserted specs in `e2e/*.spec.ts`, then run `pnpm e2e`. Playwright's `webServer` migrates + seeds an isolated `./e2e.db` and starts/stops the Express API and Vite web server automatically — do **not** start or stop dev servers by hand.
+2. **Graded visual / responsive checks** (a UI that "breathes" at 375px and 1440px): `e2e/responsive.spec.ts` writes screenshots to `e2e/screenshots/`. Run `pnpm e2e`, then open/read those PNGs and judge the layout — Playwright captures, the aesthetic call is yours.
+3. **Parallel task runs only** (avoid port/DB collisions; single-agent runs need nothing extra): `E2E_WEB_PORT=$((3100 + $task)) E2E_API_PORT=$((3200 + $task)) E2E_DATABASE_URL=./e2e-$task.db pnpm e2e`
 
 ### Test Execution Best Practices
 

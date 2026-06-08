@@ -23,11 +23,19 @@
 
 ## Testing Strategy
 
-### Unit tests
-- {{ spec/test files and what each one covers }}
+### Unit / component tests
+- {{ Vitest spec/test files and what each one covers (colocated `*.test.ts` / `*.test.tsx`) }}
 
-### Manual / Claude-in-Chrome MCP testing
-- {{ scenarios with steps and expected results, or an explicit "not needed because …" }}
+### Browser e2e (Playwright)
+- {{ Asserted `e2e/*.spec.ts` flows for browser behavior — navigation, forms, auth,
+     redirects, 404s — run via `pnpm e2e`. Playwright's webServer migrates + seeds an
+     isolated `./e2e.db` and starts/stops the stack itself; no manual servers.
+     Or an explicit "not needed because …" for backend/CLI-only tasks. }}
+
+### Visual / responsive review (if the feature has UI impact)
+- {{ Screenshots captured by `e2e/responsive.spec.ts` into `e2e/screenshots/` at 375px
+     and 1440px, reviewed for a layout that breathes. Playwright captures; a human or
+     vision-capable agent judges. Or "not needed because …". }}
 
 ## To-Do List
 
@@ -36,8 +44,8 @@
 - [ ] {{ implementation step 2 }}
 
 ### Testing
-- [ ] {{ unit tests }}
-- [ ] {{ manual testing }}
+- [ ] {{ unit / component tests }}
+- [ ] {{ Playwright e2e specs + (if UI) responsive screenshot review }}
 
 ## Project Docs Update
 
