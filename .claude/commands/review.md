@@ -93,7 +93,7 @@ Before running browser tests:
 1. **Check if your port is free**: `lsof -i:{your_port}`
    - If occupied: DO NOT kill it (belongs to another task). Use a different port.
 2. **Start YOUR server** from YOUR worktree directory on your assigned port
-   - Web (the browser hits this): `pnpm dev:web -- --port {your_port}`; Express API in parallel: `pnpm dev:api` (Vite proxies `/api` to it on :3000)
+   - Web (the browser hits this): `pnpm dev:web --port {your_port}`; Express API in parallel: `pnpm dev:api` (Vite proxies `/api` to it on :3000)
    - Run it in the foreground or use `&` with PID tracking — do NOT use daemon mode
 3. **Verify correct codebase**: Confirm the running process is serving from your worktree path
 4. Drive the browser (via Claude-in-Chrome MCP) against `http://localhost:{your_port}`
@@ -225,7 +225,7 @@ The task plan above is one task expanded from the **overall specs** at `tasks/sp
 - **Dev Server Port:** compute as `3100 + $task` (e.g. task `1` → `3101`, task `2` → `3102`)
 
 When running Claude-in-Chrome MCP tests, start the dev server on your assigned port (`3100 + $task`):
-1. Start the web (Vite) dev server on your assigned port — the browser hits this: `pnpm dev:web -- --port <port>`
+1. Start the web (Vite) dev server on your assigned port — the browser hits this: `pnpm dev:web --port <port>`
 2. Start the Express API in parallel (default port 3000, which Vite proxies `/api` to): `pnpm dev:api`
 3. Drive the browser (via Claude-in-Chrome MCP) against `http://localhost:<port>`
 4. Stop the web server when testing is complete: `lsof -ti:<port> | xargs kill -9 2>/dev/null || true` (also stop the API on :3000 if you started it)
