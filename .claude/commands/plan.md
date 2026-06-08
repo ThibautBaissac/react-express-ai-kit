@@ -115,6 +115,7 @@ To-Do items must be concrete and verifiable:
 - Split mixed implementation/testing work into the appropriate sections.
 - Testing To-Dos must say what command or scenario proves the work when that is knowable.
 - Prefer the project's documented helper commands and existing scripts over ad hoc commands.
+- Where a project skill fits the step, name it so `/implementation` reaches for it: `/scaffold-feature`, `/add-api-contract`, `/add-mutation`, `/scaffold-form`, `/react-router`, `/style-component`, `/scaffold-auth`, `/api-error-handling`, `/scaffold-seed`, `/write-tests`. Use the schema-migration subagent for table/migration steps. Naming a skill is a hint, not a contract — the item must still state its concrete deliverable.
 
 The plan ends when code + tests are done. The PR agent takes it from there.
 

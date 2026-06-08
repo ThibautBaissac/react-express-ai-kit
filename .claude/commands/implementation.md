@@ -35,6 +35,27 @@ Stay strictly inside this task's declared scope — do not implement work the sp
 - If a To-Do item is already satisfied by existing code, verify it, then mark it complete with any necessary note in the task doc.
 - If a planned item is no longer valid because the codebase changed, make the smallest correct adjustment and document the reason in the task doc.
 
+## Realize To-Do items with the project skills
+
+These skills encode the project's conventions; prefer them over hand-rolling a
+To-Do item from scratch, then adapt the output to the task. Reach for the one
+that matches the work:
+
+- `/scaffold-feature` — a new vertical slice or endpoint (`api`/`ui`/`full`).
+- `/add-api-contract` — a new/changed FE↔BE request/response shape or DTO.
+- `/add-mutation` — a create/update/delete write path with cache invalidation.
+- `/scaffold-form` — a create/edit form bound to a request contract.
+- `/react-router` — routes, layouts, route-level loading, URL/search state.
+- `/style-component` — Tailwind + Headless UI presentational styling.
+- `/scaffold-auth` — auth, server-side authorization, ownership checks.
+- `/api-error-handling` — domain errors, status codes, frontend error mapping.
+- `/scaffold-seed` — idempotent seed data for demos, security proofs, empty states.
+- `/write-tests` — colocated unit/component/route tests for the Testing To-Dos.
+
+The schema-migration subagent (not a skill) owns table definitions and
+migrations. Skills are aids, not gates: if none fits, implement directly to the
+task plan. They never widen scope — stay inside this task's declared boundary.
+
 ## Verification
 
 Run checks in a risk-scaled order:
