@@ -1,149 +1,20 @@
 # react-express-ai-kit
 
-An opinionated starting point for a React + Express + TypeScript app, bundled
-with a Claude Code project pack for planning, scaffolding, review, and local
-quality checks.
+An opinionated starter for a React + Express + TypeScript application, bundled
+with a Claude Code project pack for architecture guidance, scaffolding, planning,
+review, and local quality checks.
 
 Use it when you want a small full-stack base with clear boundaries from day one:
 one Vite React SPA, one Express API, shared zod contracts, Drizzle-backed data
-access, and vertical feature slices instead of a loose pile of components and
+access, and vertical feature slices instead of scattered components and
 controllers.
 
-## Quick Start
+## Development Workflow
 
-```bash
-pnpm install
-pnpm dev
-```
-
-This starts:
-
-- Vite web server for the SPA.
-- Express API server from `src/server.ts`.
-- Vite proxying `/api/*` to the API during development.
-
-Useful commands:
-
-```bash
-pnpm typecheck
-pnpm lint
-pnpm test
-pnpm build
-pnpm ci
-```
-
-Database commands are wired for Drizzle + SQLite:
-
-```bash
-pnpm db:generate
-pnpm db:migrate
-pnpm db:studio
-```
-
-`DATABASE_URL` defaults to `./sqlite.db`.
-
-## What You Get
-
-The starter is deliberately narrow:
-
-- React 19 SPA built with Vite.
-- Express 5 API, also in TypeScript.
-- React Router v7 in Data Mode.
-- TanStack Query for all server state.
-- Zustand only for UI-only state.
-- zod 4 for request, response, URL, env, and API boundary parsing.
-- Drizzle ORM with SQLite, hidden behind repository modules.
-- Tailwind CSS v4 through the Vite plugin.
-- Headless UI for accessible interactive primitives.
-- Vitest, Testing Library, ESLint, Prettier, and strict TypeScript.
-- A `.claude/` pack with rules, skills, subagents, hooks, and slash commands.
-
-The app itself starts minimal: a root route, an API health response, shared
-helpers for API calls, query client, env parsing, and DB access. Add real product
-code under `src/features/`.
-
-## Architecture
-
-This repo uses a single `src/` tree with a hybrid layout:
-
-```txt
-src/
-  features/<feature>/
-    <feature>.schema.ts      # zod contract shared by frontend and backend
-    <feature>.table.ts       # Drizzle table, when persistence is needed
-    <feature>.repository.ts  # data access boundary
-    <feature>.service.ts     # business logic
-    <feature>.routes.ts      # thin Express handlers
-    components/
-    hooks/
-    store/
-    <feature>.routes.tsx     # frontend routes
-    *.test.ts
-
-  shared/
-    lib/                     # db, env, API client, query client, config
-    ui/                      # generic UI primitives only
-    contracts/               # cross-feature contracts only
-```
-
-The core rules:
-
-- Backend flow is `route -> service -> repository -> data`.
-- Frontend server data flows `component -> hook -> TanStack Query -> API`.
-- Frontend UI-only state may use `component -> hook/store -> Zustand`.
-- Features may import `shared/`; `shared/` never imports a feature.
-- Avoid feature-to-feature imports. Coordinate cross-feature work at a composition
-  boundary or revisit ownership.
-- Parse untrusted input with zod at the boundary, then trust the parsed type.
-- Do not mirror server data into Zustand.
-- Do not add domain abstractions before a third real use proves the shape.
-
-More detail lives in [CLAUDE.md](CLAUDE.md) and
-[.claude/rules/architecture.md](.claude/rules/architecture.md).
-
-## Starting A New Project
-
-1. Rename the package and app title.
-2. Replace the placeholder app description in [CLAUDE.md](CLAUDE.md).
-3. Keep the stack unless you have a concrete reason to change it.
-4. Add the first domain slice under `src/features/<feature>/`.
-5. Put shared infrastructure in `src/shared/lib`; keep domain logic out of
-   `shared/`.
-6. Add zod contracts before wiring routes or forms.
-7. Add Drizzle tables only for persisted features, then generate migrations.
-8. Keep tests colocated with the feature code they prove.
-
-For a new feature, the intended shape is:
-
-```bash
-/scaffold-feature invoices full
-```
-
-Then review and adapt the generated slice rather than hand-rolling a different
-layout.
-
-## Claude Code Workflow
-
-The `.claude/` directory is part of the starter. It gives Claude Code the same
-architecture and quality bar every session.
-
-Practical commands:
-
-```txt
-/scaffold-feature <name> [full|api|ui]
-/add-api-contract <name>
-/add-mutation <feature/action>
-/scaffold-form <name>
-/react-router <route-or-feature>
-/style-component <target>
-/scaffold-auth <session|token>
-/api-error-handling <feature>
-/scaffold-seed <feature>
-/write-tests <path>
-/run-checks
-```
-
-For larger work, use the task pipeline:
+This kit is designed to be used with the committed Claude Code pack, not just as
+a dependency list. Start product work from a brief, turn it into task files, let
+the pack implement against those task files, then run review and CI gates before
+moving on.
 
 ```txt
 /specs-generation docs/brief.md
@@ -156,22 +27,161 @@ For larger work, use the task pipeline:
 /ci-gate 1
 ```
 
-The pipeline writes task files under `tasks/` using
-[templates/plan-template.md](templates/plan-template.md). The helper scripts
-[scripts/complete-plan.ts](scripts/complete-plan.ts) and
-[scripts/complete-workflow.ts](scripts/complete-workflow.ts) mark task status in
-`tasks/task-N.status.json`.
+The workflow is backed by `CLAUDE.md`, `.claude/rules/`, `.claude/skills/`, and `.claude/hooks/`, so every agent session sees the same
+architecture rules, task format, and quality gate.
 
-Hooks in [.claude/settings.json](.claude/settings.json) do three things:
+## Quick Start
 
-- Report the detected package manager and test runner at session start.
-- Format and lint edited TypeScript files after writes.
-- Warn before installing dependencies with a package manager that conflicts with
-  the lockfile.
+```bash
+pnpm install
+pnpm dev
+```
 
-The toolchain detector lives in
-[.claude/lib/detect-toolchain.sh](.claude/lib/detect-toolchain.sh). When copying
-the `.claude/` pack into another repo, route checks through its helpers:
+`pnpm dev` runs both development servers:
+
+- Vite serves the React SPA.
+- `tsx watch src/server.ts` runs the Express API.
+- Vite proxies `/api/*` to the API server, which defaults to
+  `http://localhost:3000`.
+
+The starter app currently renders a single root page and exposes
+`GET /api/health`, which returns `{ "status": "ok" }`.
+
+## Commands
+
+```bash
+pnpm dev             # run web + API in development
+pnpm dev:web         # run only the Vite web server
+pnpm dev:api         # run only the Express API server
+pnpm typecheck       # TypeScript, no emit
+pnpm lint            # ESLint
+pnpm test            # Vitest unit/integration tests
+pnpm e2e             # Playwright browser tests
+pnpm build           # build client and server
+pnpm start           # run the built API server
+pnpm preview         # preview the built client
+pnpm ci              # typecheck + lint + test + build
+```
+
+Database commands are wired for Drizzle + SQLite:
+
+```bash
+pnpm db:generate
+pnpm db:migrate
+pnpm db:seed
+pnpm db:studio
+```
+
+`DATABASE_URL` defaults to `./sqlite.db`. Drizzle scans feature tables from
+`src/features/**/*.table.ts`; the starter has no persisted feature tables yet, so
+`scripts/seed.ts` is currently a placeholder.
+
+## What You Get
+
+- React 19 SPA built with Vite.
+- Express 5 API, also in TypeScript.
+- React Router v7 in Data Mode.
+- TanStack Query for server state.
+- Zustand for UI-only state.
+- zod 4 for request, response, URL, environment, and API boundary parsing.
+- Drizzle ORM with SQLite through `better-sqlite3`.
+- Tailwind CSS v4 through the Vite plugin.
+- Headless UI and React Hook Form for accessible interactive UI.
+- Vitest, Testing Library, Playwright, ESLint, Prettier, and strict TypeScript.
+- A `.claude/` pack with project rules, skills, slash commands, hooks, and
+  authoring docs.
+
+## Project Layout
+
+This repo uses one package and one `src/` tree. The current app is intentionally
+minimal, with feature slices added as product code appears.
+
+```txt
+src/
+  apiApp.ts                  # Express app factory and central error handler
+  server.ts                  # API server entry point
+  main.tsx                   # React entry point
+  router.tsx                 # React Router Data Mode router
+  App.tsx                    # starter root route
+  app.test.ts                # starter API smoke test
+
+  features/<feature>/        # add domain slices here
+    <feature>.schema.ts      # zod contract shared by frontend and backend
+    <feature>.table.ts       # Drizzle table, when persistence is needed
+    <feature>.repository.ts  # data access boundary
+    <feature>.service.ts     # business logic
+    <feature>.routes.ts      # thin Express handlers
+    components/
+    hooks/
+    store/
+    <feature>.routes.tsx     # frontend routes
+    *.test.ts
+
+  shared/
+    lib/                     # db, env, API client, query client
+    ui/                      # generic UI primitives only
+    contracts/               # cross-feature contracts only
+```
+
+The core dependency rules are:
+
+- Backend flow is `route -> service -> repository -> data`.
+- Frontend server data flows `component -> hook -> TanStack Query -> API`.
+- UI-only state may use Zustand, but server data should not be mirrored there.
+- Features may import `shared/`; `shared/` must not import features.
+- Avoid feature-to-feature imports. Coordinate at a composition boundary instead.
+- Parse untrusted input with zod at the boundary, then trust the parsed type.
+- Do not add domain abstractions before a third real use proves the shape.
+
+More detail lives in [CLAUDE.md](CLAUDE.md) and
+[.claude/rules/architecture.md](.claude/rules/architecture.md).
+
+## Testing
+
+Vitest runs the colocated TypeScript tests and excludes `e2e/**`.
+
+```bash
+pnpm test
+```
+
+Playwright runs a real Express + Vite stack through `webServer`.
+
+```bash
+pnpm e2e
+```
+
+The e2e suite currently checks the app shell and API health endpoint. It does
+not run migrations or seed data for the starter because no persisted feature
+exists yet. When you add persisted features, extend the Playwright API
+`webServer` command to migrate and seed an isolated test database.
+
+`e2e/responsive.spec.ts` writes visual-review screenshots for 375px mobile and
+1440px desktop to `e2e/screenshots/`. Use `pnpm e2e:report` to open the latest
+Playwright HTML report.
+
+## Claude Code Pack
+
+`AGENTS.md` is a symlink to [CLAUDE.md](CLAUDE.md), so agents that read either
+file get the same project memory.
+
+The committed `.claude/` pack includes:
+
+- Always-on and path-scoped rules under `.claude/rules/`.
+- Skills under `.claude/skills/`, including `/scaffold-feature`, `/add-api-contract`,
+  `/add-mutation`, `/scaffold-form`, `/react-router`, `/style-component`,
+  `/scaffold-auth`, `/api-error-handling`, `/scaffold-seed`, `/write-tests`, and
+  `/run-checks`.
+- Workflow commands under `.claude/commands/`: `/specs-generation`,
+  `/adversarial-specs-review`, `/plan`, `/adversarial-task-plan-review`,
+  `/implementation`, `/review`, `/refinement`, and `/ci-gate`.
+- Hooks under `.claude/hooks/` for session toolchain reporting, package-manager
+  guardrails, and post-edit format/lint checks.
+- Authoring docs under `docs/` for rules, skills, slash commands, subagents, and
+  hooks. The docs cover subagents as a Claude Code mechanism, but this starter
+  does not currently ship `.claude/agents/` definitions.
+
+For agent-driven quality checks, prefer the toolchain detector instead of
+hardcoding package-manager commands:
 
 ```bash
 source .claude/lib/detect-toolchain.sh
@@ -181,37 +191,34 @@ run_tests
 run_build
 ```
 
-## Customizing The Starter
+The planning workflow writes task files under `tasks/` using
+[templates/plan-template.md](templates/plan-template.md). The helper scripts
+[scripts/complete-plan.ts](scripts/complete-plan.ts) and
+[scripts/complete-workflow.ts](scripts/complete-workflow.ts) update
+`tasks/task-N.status.json`.
 
-Good defaults to keep:
+## Starting A Product
 
-- One root package and one `src/` tree.
-- Feature-owned contracts by default.
-- Repository modules as the only place Drizzle is imported.
-- TanStack Query as the only server-state cache.
-- React Hook Form + zod contracts for forms.
-- Tailwind utilities plus Headless UI for interactive controls.
+1. Rename the package and app title.
+2. Replace the placeholder app description in [CLAUDE.md](CLAUDE.md).
+3. Add the first domain slice under `src/features/<feature>/`.
+4. Define zod contracts before wiring routes, API calls, or forms.
+5. Add Drizzle tables only for persisted features, then generate migrations.
+6. Keep tests colocated with the feature code they prove.
 
-Reasonable changes:
+For a new feature, the intended entry point is:
 
-- Swap SQLite for another Drizzle-supported database.
-- Add authentication once a feature needs it.
-- Add shared UI primitives as the design system emerges.
-- Disable a Claude hook by editing `.claude/settings.json`.
+```txt
+/scaffold-feature invoices full
+```
 
-Avoid early:
-
-- A generic service layer in `shared/`.
-- A global `types/` folder for domain types.
-- Mirroring API data into Zustand.
-- Cross-feature imports to save a few lines.
-- New abstractions before there are repeated, real call sites.
+Review and adapt the generated slice instead of introducing a different layout.
 
 ## Requirements
 
 - Node 20 or newer.
 - pnpm, matching the checked-in lockfile.
-- Claude Code if you want the `.claude/` workflow.
+- Claude Code, if you want to use the `.claude/` workflow.
 
 ## License
 
