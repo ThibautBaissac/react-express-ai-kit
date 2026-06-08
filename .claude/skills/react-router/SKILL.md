@@ -1,7 +1,7 @@
 ---
 name: react-router
 description: "Add or extend client-side routing with React Router v7 in Data Mode (createBrowserRouter + RouterProvider), wired to vertical slices, TanStack Query, and zod-parsed URL state."
-when_to_use: "Use WHEN adding routes, nested layouts, route-level data loading, URL/search-param state, or navigation to the Vite React SPA. Do NOT use to adopt Framework Mode / SSR (it replaces the Express backend), and do NOT move server-state ownership out of TanStack Query."
+when_to_use: "Use WHEN adding routes, nested layouts, route-level data loading, URL/search-param state, or navigation to the Vite React SPA — whether the user asks directly or an implementation agent is realizing a matching To-Do item from a `tasks/task-N.md` plan. Do NOT use to adopt Framework Mode / SSR (it replaces the Express backend), and do NOT move server-state ownership out of TanStack Query."
 argument-hint: "[route-or-feature-name]"
 arguments: [route]
 model: sonnet

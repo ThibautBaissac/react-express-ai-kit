@@ -63,7 +63,7 @@ src/
 
 ## Skills (invoke with `/name`)
 
-`/scaffold-feature` · `/add-api-contract` · `/react-router` · `/scaffold-form` · `/style-component` · `/write-tests` · `/run-checks`
+`/scaffold-feature` · `/add-api-contract` · `/add-mutation` · `/scaffold-form` · `/react-router` · `/style-component` · `/scaffold-auth` · `/api-error-handling` · `/scaffold-seed` · `/write-tests` · `/run-checks`
 
 ## Deeper docs (loaded on demand)
 

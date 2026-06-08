@@ -1,7 +1,7 @@
 ---
 name: scaffold-feature
 description: "Scaffold a vertical-slice React + Express + TypeScript feature with a FE/BE zod contract, backend route → service → repository, frontend Query hooks and optional UI state, and colocated tests."
-when_to_use: "Use WHEN the user asks to add a feature, endpoint, resource, CRUD flow, or vertical slice. Use `api` for backend-only work and `ui` for frontend-only work. Do NOT use for one-off edits or DB schema changes; use the schema-migration subagent for schema work."
+when_to_use: "Use WHEN adding a feature, endpoint, resource, CRUD flow, or vertical slice — whether the user asks directly or an implementation agent is realizing a matching To-Do item from a `tasks/task-N.md` plan. Use `api` for backend-only work and `ui` for frontend-only work. Do NOT use for one-off edits or DB schema changes; use the schema-migration subagent for schema work."
 argument-hint: "[feature-name] [full|api|ui]"
 arguments: [feature, mode]
 model: sonnet

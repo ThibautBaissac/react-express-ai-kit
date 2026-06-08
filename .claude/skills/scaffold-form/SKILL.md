@@ -1,7 +1,7 @@
 ---
 name: scaffold-form
 description: "Scaffold a React Hook Form wired to the feature's zod request contract via zodResolver, submitting through a TanStack Query mutation hook, with accessible fields and surfaced errors."
-when_to_use: "Use WHEN adding or changing a create/edit form, input form, or form component in the React SPA. Do NOT use to define the API shape (use /add-api-contract first) or to style presentation only (use /style-component)."
+when_to_use: "Use WHEN adding or changing a create/edit form, input form, or form component in the React SPA — whether the user asks directly or an implementation agent is realizing a matching To-Do item from a `tasks/task-N.md` plan. Do NOT use to define the API shape (use /add-api-contract first) or to style presentation only (use /style-component)."
 argument-hint: "[form-name]"
 arguments: [form]
 model: sonnet

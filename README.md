@@ -132,9 +132,13 @@ Practical commands:
 ```txt
 /scaffold-feature <name> [full|api|ui]
 /add-api-contract <name>
-/react-router <route-or-feature>
+/add-mutation <feature/action>
 /scaffold-form <name>
+/react-router <route-or-feature>
 /style-component <target>
+/scaffold-auth <session|token>
+/api-error-handling <feature>
+/scaffold-seed <feature>
 /write-tests <path>
 /run-checks
 ```

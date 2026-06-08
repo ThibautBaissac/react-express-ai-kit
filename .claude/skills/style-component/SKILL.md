@@ -1,7 +1,7 @@
 ---
 name: style-component
 description: "Style React UI with Tailwind CSS v4 utilities and Headless UI accessible primitives, wired into presentational components without breaking one-way layering."
-when_to_use: "Use WHEN styling or restyling a component, building a dialog/menu/combobox/listbox/popover/tabs/switch/disclosure, adding transitions, or setting up Tailwind. Do NOT use to fetch data or add business logic (that lives in hooks/services), and do NOT use for backend work."
+when_to_use: "Use WHEN styling or restyling a component, building a dialog/menu/combobox/listbox/popover/tabs/switch/disclosure, adding transitions, or setting up Tailwind — whether the user asks directly or an implementation agent is realizing a matching To-Do item from a `tasks/task-N.md` plan. Do NOT use to fetch data or add business logic (that lives in hooks/services), and do NOT use for backend work."
 argument-hint: "[component-or-feature]"
 arguments: [target]
 model: sonnet

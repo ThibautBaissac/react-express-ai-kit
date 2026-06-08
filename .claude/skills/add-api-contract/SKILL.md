@@ -1,7 +1,7 @@
 ---
 name: add-api-contract
 description: "Create or extend the owning zod schema as the single source of truth for a FE/BE API shape, then wire backend parsing and a typed frontend call."
-when_to_use: "Use WHEN adding or changing an API request shape, response shape, DTO, or React/Express boundary contract. Do NOT use for internal-only types or DB schema changes; use the schema-migration subagent for schema and migration work."
+when_to_use: "Use WHEN adding or changing an API request shape, response shape, DTO, or React/Express boundary contract — whether the user asks directly or an implementation agent is realizing a matching To-Do item from a `tasks/task-N.md` plan. Do NOT use for internal-only types or DB schema changes; use the schema-migration subagent for schema and migration work."
 argument-hint: "[contract-name]"
 arguments: [contract]
 model: sonnet
