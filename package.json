@@ -32,6 +32,8 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@casl/ability": "^7.0.0",
+    "@casl/react": "^7.0.0",
     "@headlessui/react": "^2.2.10",
     "@hookform/resolvers": "^5.4.0",
     "@tanstack/react-query": "^5.101.0",
