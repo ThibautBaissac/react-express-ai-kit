@@ -1,7 +1,7 @@
 ---
 name: write-tests
 description: "Write colocated tests for React + Express + TypeScript code using the project's runner, conventions, mocked repository interfaces, React Testing Library, and TanStack Query patterns."
-when_to_use: "Use WHEN adding tests, improving coverage, or testing a module, service, hook, component, route, or feature — whether the user asks directly or an implementation agent is realizing a Testing To-Do item from a `tasks/task-N.md` plan. Do NOT use to run an existing suite; use /run-checks for that."
+when_to_use: "Use WHEN adding tests, improving coverage, or testing a module, service, hook, component, route, or feature — whether the user asks directly or an implementation agent is realizing a Testing To-Do item from a `tasks/task-N.md` plan. Do NOT use to run an existing suite (use /run-checks), and do NOT use for browser end-to-end flows (those are Playwright specs in `e2e/` — use /e2e)."
 argument-hint: "[path-to-test]"
 arguments: [target]
 model: sonnet

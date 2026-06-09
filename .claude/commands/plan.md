@@ -115,7 +115,7 @@ To-Do items must be concrete and verifiable:
 - Split mixed implementation/testing work into the appropriate sections.
 - Testing To-Dos must say what command or scenario proves the work when that is knowable.
 - Prefer the project's documented helper commands and existing scripts over ad hoc commands.
-- Where a project skill fits the step, name it so `/implementation` reaches for it: `/scaffold-feature`, `/add-api-contract`, `/add-mutation`, `/scaffold-form`, `/react-router`, `/style-component`, `/scaffold-auth`, `/api-error-handling`, `/scaffold-seed`, `/write-tests`. Use the schema-migration subagent for table/migration steps. Naming a skill is a hint, not a contract — the item must still state its concrete deliverable.
+- Where a project skill fits the step, name it so `/implementation` reaches for it: `/scaffold-feature`, `/add-api-contract`, `/add-mutation`, `/scaffold-form`, `/react-router`, `/style-component`, `/scaffold-auth`, `/api-error-handling`, `/scaffold-seed`, `/write-tests`, `/e2e` (browser end-to-end flows). Use the schema-migration subagent for table/migration steps. Naming a skill is a hint, not a contract — the item must still state its concrete deliverable.
 
 The plan ends when code + tests are done. The PR agent takes it from there.
 
@@ -149,12 +149,7 @@ The task plan above is one task expanded from the **overall specs** at `tasks/sp
 ## Testing Configuration
 
 - **Task ID:** $task
-- **Browser checks run through Playwright** (`pnpm e2e`)
-
-Browser / visual verification:
-1. **Functional flows** (navigation, forms, auth, redirects, 404s): add or extend asserted specs in `e2e/*.spec.ts`, then run `pnpm e2e`. Playwright's `webServer` migrates + seeds an isolated `./e2e.db` and starts/stops the Express API and Vite web server automatically — do **not** start or stop dev servers by hand.
-2. **Graded visual / responsive checks** (a UI that "breathes" at 375px and 1440px): `e2e/responsive.spec.ts` writes screenshots to `e2e/screenshots/`. Run `pnpm e2e`, then open/read those PNGs and judge the layout — Playwright captures, the aesthetic call is yours.
-3. **Parallel task runs only** (avoid port/DB collisions; single-agent runs need nothing extra): `E2E_WEB_PORT=$((3100 + $task)) E2E_API_PORT=$((3200 + $task)) E2E_DATABASE_URL=./e2e-$task.db pnpm e2e`
+- **Browser checks run through Playwright** (`pnpm e2e`) — read `.claude/references/e2e-runbook.md` and apply it.
 
 ### Test Execution Best Practices
 
